@@ -53,21 +53,21 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[10, 20, 50, 100,200]"
-      :page-size="10"
+      :page-sizes="[find.limit, 20, 50, 100,200]"
+      :page-size="find.limit"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
 
     <!-- 弹出框 -->
-    <el-dialog title="员工信息" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="员工信息" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
       <span>
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
           label-width="100px"
-          class="demo-ruleForm"
+          class="demo-ruleForm flex"
         >
           <el-form-item label="姓名:" prop="username">
             <el-input v-model="ruleForm.username" placeholder="请输入员工姓名" class="inputWidth"></el-input>
@@ -79,6 +79,16 @@
                 :key="item._id"
                 :label="item.rolename"
                 :value="item.rolename"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="团队:" prop="team">
+            <el-select v-model="ruleForm.team" placeholder="请选择员工团队">
+              <el-option
+                v-for="item in teamList"
+                :key="item._id"
+                :label="item.teamname"
+                :value="item.teamname"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -123,6 +133,7 @@ export default {
       tableHeader: [
         { name: '工号', prop: 'uid' },
         { name: '姓名', prop: 'username' },
+        { name: '团队', prop: 'team' },
         { name: '角色', prop: 'role' },
         { name: '电话', prop: 'phone' }
       ],
@@ -136,9 +147,11 @@ export default {
         limit: 10 //每一页的数量
       },
       dialogVisible: false,
+      teamList:[],
       ruleForm: {
         imgurl: '',
         uid: '',
+        team:'',
         username: '',
         role: '',
         phone: ''
@@ -147,15 +160,24 @@ export default {
         username: [
           { required: true, message: '请输入员工姓名', trigger: 'blur' }
         ],
-        role: [{ required: true, message: '请选择员工角色', trigger: 'change' }]
+        role: [{ required: true, message: '请选择员工角色', trigger: 'blur' }],
       }
     }
   },
   mounted() {
     this.getUserList()
     this.findRoleList()
+    this.findteam()
   },
   methods: {
+    findteam() {
+      //查询团队
+      this.$axios.get(this.$api.findTeam).then(res => {
+        if (res.code == 200) {
+          this.teamList = res.data
+        }
+      })
+    },
     //获取用户列表
     getUserList() {
       var data = {
@@ -210,6 +232,7 @@ export default {
       })
         .then(async () => {
           this.ruleForm = row
+          console.log(this.ruleForm)
           if (this.ruleForm.imgurl) {
             let delateImg = await this.delateImgAll()
             if (delateImg.code == 200) {
@@ -224,7 +247,7 @@ export default {
                 })
             }
           } else {
-            await this.$axios.post(this.$api.deleteUser, row.uid).then(res => {
+            await this.$axios.post(this.$api.deleteUser, { uid: row.uid }).then(res => {
               this.getUserList()
               this.$message({
                 type: 'success',
@@ -268,7 +291,6 @@ export default {
           } else {
             //更新
             if (this.fileList.length && this.ruleForm.imgurl) {
-              console.log('this.fileList.length && this.ruleForm.imgurl')
               let delateImg = await this.delateImgAll()
               if (delateImg.code == 200) {
                 let uploadImg = await this.$axios.post(this.$api.uploadImg, {
@@ -280,13 +302,11 @@ export default {
                 }
               }
             } else if (!this.fileList.length && this.ruleForm.imgurl) {
-              console.log('!this.fileList.length && this.ruleForm.imgurl')
               let delateImg = await this.delateImgAll()
               if (delateImg.code == 200) {
                 this.ruleForm.imgurl = ''
               }
             } else if (this.fileList.length && !this.ruleForm.imgurl) {
-              console.log('this.fileList.length && !this.ruleForm.imgurl')
               let uploadImg = await this.$axios.post(this.$api.uploadImg, {
                 name: this.fileList[0].name,
                 path: this.fileList[0].url
@@ -295,8 +315,6 @@ export default {
                 this.ruleForm.imgurl = uploadImg.data
               }
             }
-            console.log(this.ruleForm)
-            console.log(this.fileList)
             this.$axios.post(this.$api.updateUser, this.ruleForm).then(res => {
               this.$message.success('修改成功')
             })
@@ -359,12 +377,6 @@ export default {
 <style scoped>
 ::v-deep .el-select {
   min-width: 100px;
-}
-::v-deep .el-input-group__append {
-  background-color: #fff;
-}
-::v-deep .el-input-group__prepend {
-  background-color: #fff;
 }
 .findInput {
   width: 400px;
