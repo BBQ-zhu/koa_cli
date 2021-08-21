@@ -40,12 +40,12 @@
     </div>
     <!-- 视频列表 -->
     <div class="videoList">
-      <div v-for="(item,index) in videoList" :key="index" class="mt10">
+      <div v-for="(item,index) in videoList" :key="index" class="mt10" style="width:260px">
         <div class="mr10">
           <video width="240" height="120" controls style="border:2px solid #213446">
             <source :src="item.videourl" />您的浏览器不支持Video标签。
           </video>
-          <div class="mt10">
+          <div class="mt10 flowellipsis">
             <i
               slot="reference"
               class="el-icon-delete-solid f20 colorRed mr10"
