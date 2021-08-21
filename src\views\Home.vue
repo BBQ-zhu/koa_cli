@@ -7,7 +7,9 @@
       <Header ref="header" />
       <div class="box">
         <transition name="slide-right" mode="out-in">
-          <router-view class="child-view"></router-view>
+          <keep-alive>
+            <router-view class="child-view"></router-view>
+          </keep-alive>
         </transition>
       </div>
     </div>
@@ -34,13 +36,14 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  width: 100%;
+  width: calc(100%);
   display: flex;
   background: #f1f5f8;
 }
 
 .main {
   flex: 1;
+  // width: calc(100%);
 }
 
 .box {
