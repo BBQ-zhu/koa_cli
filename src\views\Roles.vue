@@ -1,25 +1,73 @@
 <template>
-  <div class="card">
-    <div class="flex header">
-      <el-input class="mr20" style="width:217px" placeholder="请输入角色名称" v-model="roleName" clearable></el-input>
-      <el-button type="primary" icon="el-icon-plus" @click="addUser()">新增角色</el-button>
+  <div class="flex flexCenter">
+    <div class="card1" style="width:49%">
+      <div class="flex header">
+        <el-input
+          class="mr20"
+          style="width:217px"
+          placeholder="请输入角色名称"
+          v-model="roleName"
+          clearable
+        ></el-input>
+        <el-button type="primary" icon="el-icon-plus" @click="addUser()">新增角色</el-button>
+      </div>
+      <el-select v-model="rloeValue" @change="collapse()" placeholder="请选择角色" class="mt20 mb20">
+        <el-option
+          v-for="item in roleLists"
+          :key="item._id"
+          :label="item.rolename"
+          :value="item._id"
+        ></el-option>
+      </el-select>
+      <el-tree
+        class="mt20"
+        :data="navList"
+        show-checkbox
+        default-expand-all
+        node-key="id"
+        ref="tree"
+        highlight-current
+        :props="defaultProps"
+      ></el-tree>
+      <div class="mt20">
+        <el-button
+          size="small"
+          type="primary"
+          icon="el-icon-edit"
+          @click="updateRole()"
+          :disabled="roleLoading"
+        >更新权限</el-button>
+        <el-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click="delRole()"
+          :disabled="roleLoading"
+        >删除角色</el-button>
+      </div>
     </div>
-    <el-select v-model="rloeValue" @change="collapse()" placeholder="请选择角色" class="mt20 mb20">
-      <el-option v-for="item in roleLists" :key="item._id" :label="item.rolename" :value="item._id"></el-option>
-    </el-select>
-    <el-tree
-      class="mt20"
-      :data="navList"
-      show-checkbox
-      default-expand-all
-      node-key="id"
-      ref="tree"
-      highlight-current
-      :props="defaultProps"
-    ></el-tree>
-    <div class="mt20">
-      <el-button size="small" type="primary" icon="el-icon-edit" @click="updateRole()" :disabled="roleLoading">更新权限</el-button>
-      <el-button size="small" type="danger" icon="el-icon-delete" @click="delRole()" :disabled="roleLoading">删除角色</el-button>
+
+    <div class="card1" style="width:49%;margin-left:1%">
+      <div class="flex header">
+        <el-input
+          class="mr20"
+          style="width:217px"
+          placeholder="请输入团队名称"
+          v-model="teamName"
+          clearable
+        ></el-input>
+        <el-button type="primary" icon="el-icon-plus" @click="addteam()">新增团队</el-button>
+      </div>
+      <div>
+        <el-tag
+          class="mt20 mr20"
+          v-for="item in teamList"
+          :key="item.teamname"
+          closable
+          :type="item.type"
+          @close="handleClose(item)"
+        >{{item.teamname}}</el-tag>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +76,10 @@
 export default {
   data() {
     return {
+      //团队数据
+      teamName: '',
+      tags: ['', 'success', 'info', 'warning', 'danger'],
+      //角色数据
       pageId: '', //当前打开页
       roleName: '', //新增角色名称
       rloeValue: '', //选中的角色名称
@@ -38,7 +90,8 @@ export default {
       },
       roleLists: [], //角色列表
       check: {},
-      roleLoading: false
+      roleLoading: false,
+      teamList: []
     }
   },
   mounted() {
@@ -47,10 +100,56 @@ export default {
       if (res.code == 200) {
         this.navList = res.data
         this.findRoleList()
+        this.findteam()
       }
     })
   },
   methods: {
+    addteam() {
+      //新增团队
+      if (this.teamName == '') {
+        this.$message.error('请输入团队名称')
+      } else {
+        this.$axios
+          .post(this.$api.addTeam, { teamname: this.teamName })
+          .then(res => {
+            if (res.code == 200) {
+              this.$message.success('创建团队成功')
+              this.findteam()
+            }
+          })
+      }
+    },
+    findteam() {
+      //查询团队
+      this.$axios.get(this.$api.findTeam).then(res => {
+        if (res.code == 200) {
+          this.teamList = res.data
+          var k = 0
+          for (let i = 0; i < this.teamList.length; i++) {
+            k++
+            if (k > 4) k = 0
+            this.teamList[i].type = this.tags[k]
+          }
+        }
+      })
+    },
+    handleClose(tag) {
+      //删除团队
+      this.$confirm('此操作将永久删除该团队, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post(this.$api.delTeam, { _id: tag._id }).then(res => {
+          if (res.code == 200) {
+            this.teamList = res.data
+            this.findteam()
+            this.$message.success('删除成功')
+          }
+        })
+      }).catch(()=>{})
+    },
     //查询角色列表
     findRoleList() {
       this.$axios.post(this.$api.findRole).then(res => {
@@ -67,13 +166,13 @@ export default {
           this.check = item
         }
       }
-      
+
       this.$refs.tree.setCheckedKeys(this.check.roleList)
     },
     //更新角色权限
     updateRole() {
-      console.log(this.$refs.tree.getCheckedNodes());
-      if(!this.rloeValue){
+      console.log(this.$refs.tree.getCheckedNodes())
+      if (!this.rloeValue) {
         this.$message.error('请先选择角色')
         return
       }
@@ -90,7 +189,7 @@ export default {
     },
     //删除角色
     delRole() {
-      if(!this.rloeValue){
+      if (!this.rloeValue) {
         this.$message.error('请先选择角色')
         return
       }
@@ -148,5 +247,13 @@ export default {
 .header {
   border-bottom: 1px solid #909399;
   padding-bottom: 15px;
+}
+.card1 {
+  min-height: 200px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 -3px 31px 0 rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 2%);
 }
 </style>
