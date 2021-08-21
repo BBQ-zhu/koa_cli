@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div class="bgColor logo">
-      <img :src="isCollapse ? '/imgs/logo2.PNG': '/imgs/logo.PNG'" />
-    </div>
+    
     <el-menu
       router
       default-active="1"
@@ -13,9 +11,12 @@
       text-color="#8699AD"
       active-text-color="#fff"
     >
+    <div class="bgColor logo">
+      <img :src="isCollapse ? '/imgs/logo2.PNG': '/imgs/logo.PNG'" />
+    </div>
       <el-submenu v-for="(item,index) in routerList" :key="index+'1'" :index="index+''">
         <template slot="title">
-          <i class="el-icon-location"></i>
+          <i :class="item.icon"></i>
           <span>{{item.name}}</span>
         </template>
         <el-menu-item
@@ -23,7 +24,7 @@
           :key="indey+'2'"
           :index="children.path"
         >
-          <i class="el-icon-location"></i>
+          <i :class="children.icon"></i>
           {{children.name}}
         </el-menu-item>
       </el-submenu>
@@ -68,7 +69,9 @@ export default {
 
 <style lang="scss" scoped>
 .aside {
-  height: calc(100vh - 60px);
+  height: calc(100vh);
+  box-sizing: content-box;
+  overflow:auto;
 }
 .logo {
   width: 100%;
