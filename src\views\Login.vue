@@ -1,23 +1,26 @@
 <template>
-  <div class="content">
-    <div class="formDiv">
-      <div class="title color1">登录</div>
-      <div>
-        <div class="line-around">
-          <span class="compants color2">xxxxxx</span>
+  <div>
+    <vue-particles class="newCanvs" hoverMode="grab" shapeType="circle" clickMode="push"></vue-particles>
+    <div class="">
+      <div class="formDiv">
+        <div class="title color1">平台管理系统</div>
+        <div>
+          <div class="line-around">
+            <span class="compants color2">众创空间</span>
+          </div>
         </div>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex">
+          <el-form-item label prop="uid" class="mt30">
+            <el-input v-model="ruleForm.uid" placeholder="请输入账号"></el-input>
+          </el-form-item>
+          <el-form-item label prop="password">
+            <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <el-button @click="submitForm('ruleForm')" class="subBtn">登录</el-button>
+        </el-form>
+        <div class="footer color2 f12 mt20">版权所有 @铸力金融服务外包有限公司<br>蜀ICP备19004658号</div>
       </div>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex">
-        <el-form-item label="账号" prop="uid">
-          <el-input v-model="ruleForm.uid" placeholder="请输入账号"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
-        </el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')" class="subBtn">登录</el-button>
-      </el-form>
     </div>
-    <div class="footer color2 f16">版权所有 @铸力金融服务有限公司 2018. 保留一切权力</div>
   </div>
 </template>
 
@@ -35,22 +38,22 @@ export default {
       }
     }
   },
-  mouted(){
-    
-  },
+  mouted() {},
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios.post(this.$api.loginUser, this.ruleForm).then(async res => {
-            if (res.code === 200) {
-              //获取并存到本地中
-              sessionStorage.clear()
-              this.$store.commit('storageUserInfo', res.data)
-              await this.$store.dispatch('getNav', this.$router)
-              this.$router.push('/Home')
-            }
-          })
+          this.$axios
+            .post(this.$api.loginUser, this.ruleForm)
+            .then(async res => {
+              if (res.code === 200) {
+                //获取并存到本地中
+                sessionStorage.clear()
+                this.$store.commit('storageUserInfo', res.data)
+                await this.$store.dispatch('getNav', this.$router)
+                this.$router.push('/Home')
+              }
+            })
         } else {
           return false
         }
@@ -61,21 +64,21 @@ export default {
 </script>
 
 <style scoped>
-.content {
+.newCanvs{
   width: 100%;
-  height: 100% !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: calc(100vh);
+  background:#2b3a4a;
 }
 .formDiv {
   width: 350px;
   height: 350px;
-  box-shadow: 0 0 10px #ebebeb;
-  padding: 50px;
+  padding: 30px;
   border-radius: 5px;
   background: white;
-  margin-top: 10%;
+  opacity: 0.8;
+  position:fixed;
+  top:calc(50vh - 190px);
+  left:calc(50% - 210px)
 }
 ::v-deep .el-form-item__label {
   font-size: 16px;
@@ -89,7 +92,7 @@ export default {
   font-size: 30px;
 }
 .compants {
-  width: 120px;
+  width: 100px;
   height: 20px;
   display: inline-block;
   background: white;
@@ -109,15 +112,14 @@ export default {
   font-size: 18px;
   font-weight: 600;
   margin-top: 20px;
+  background:#2b3a4a;
+  color:#fff;
+  border-radius: 8px;
 }
 .footer {
   width: 100%;
-  height: 50px;
   text-align: center;
-  line-height: 50px;
-  box-shadow: 1px 1px 10px #909399;
-  background: #fff;
-  position: fixed;
-  bottom: 0;
+  line-height: 20px;
+  font-size: 12px;
 }
 </style>
