@@ -5,27 +5,51 @@
         type="primary"
         icon="el-icon-collection-tag"
         class="mr20"
-        @click="typeClass=true"
-      >分类管理</el-button>
-      <el-button type="primary" icon="el-icon-upload" @click="dialogVisible=true,isAdd=true">上传产品</el-button>
-      <el-select class="ml20" v-model="selectInput" placeholder="请选择" @change="classType = 'type',findClass()">
+        @click="typeClass = true"
+        >分类管理</el-button
+      >
+      <el-button
+        type="primary"
+        icon="el-icon-upload"
+        @click="(dialogVisible = true), (isAdd = true)"
+        >上传产品</el-button
+      >
+      <el-select
+        class="ml20"
+        v-model="selectInput"
+        placeholder="请选择产品类型"
+        @change="(classType = 'type'), findClass()"
+      >
         <el-option
           v-for="item in dynamicTags"
-          :key="item.type"
-          :label="item.type"
-          :value="item.type"
+          :key="item._id"
+          :label="item.name"
+          :value="item.name"
         ></el-option>
       </el-select>
-      <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
-        <el-select v-model="classType" slot="prepend" placeholder="请选择" style="width:120px">
+      <el-input
+        placeholder="请输入内容"
+        v-model="input"
+        class="input-with-select findInput ml20"
+      >
+        <el-select
+          v-model="classType"
+          slot="prepend"
+          placeholder="请选择"
+          style="width: 120px"
+        >
           <el-option
-            v-for="(item,index) in tableHeader"
-            :key="index+'h'"
+            v-for="(item, index) in tableHeader"
+            :key="index + 'h'"
             :label="item.name"
             :value="item.prop"
           ></el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search" @click="getNewsList()"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="getNewsList()"
+        ></el-button>
       </el-input>
       <!-- <el-input placeholder="请输入产品名称" v-model="input" class="input-with-select findInput ml20">
         <el-button slot="append" icon="el-icon-search" @click="classType = 'name',getNewsList()"></el-button>
@@ -40,62 +64,93 @@
           ref="ruleForm"
           label-width="100px"
           class="demo-ruleForm"
-          style="width:80%"
+          style="width: 80%"
         >
-        <div class="flex">
-          <el-form-item label="产品名称:" prop="name">
-            <el-input v-model="ruleForm.name" placeholder="请输入产品名称"></el-input>
-          </el-form-item>
-          <el-form-item label="产品分类:" prop="type">
-            <el-select style="width:100%" v-model="ruleForm.type" placeholder="请选择">
-              <el-option
-                v-for="item in dynamicTags"
-                :key="item.type"
-                :label="item.type"
-                :value="item.type"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="产品价格:" prop="newprice">
-            <el-input v-model="ruleForm.newprice" placeholder="请输入产品价格"></el-input>
-          </el-form-item>
-          <el-form-item label="产品原价格:" prop="oldprice">
-            <el-input v-model="ruleForm.oldprice" placeholder="请输入产品原价格"></el-input>
-          </el-form-item>
-          
-          <el-form-item label="产品描述:" prop="description">
-            <el-input v-model="ruleForm.description" placeholder="请输入产品描述"></el-input>
-          </el-form-item>
-          <el-form-item label="产品推荐:" prop="recommend">
-            <el-select style="width:100%" v-model="ruleForm.recommend" placeholder="请选择">
-              <el-option label="推荐" value="推荐"></el-option>
-              <el-option label="不推荐" value="不推荐"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="产品图片:" prop="productimg">
-            <div style="position:relative;">
-              <el-input placeholder="请上传产品图片" v-model="ruleForm.productimg" disabled></el-input>
-              <el-upload
-                style="position:absolute;top:0;right:-110px"
-                class="upload-demo"
-                :data="ruleForm"
-                :action="this.$api.uploadProductImg"
-                :headers="uploadHeader"
-                :on-error="onError"
-                :on-success="handSuccess"
-                :show-file-list="false"
+          <div class="flex">
+            <el-form-item label="产品名称:" prop="name">
+              <el-input
+                v-model="ruleForm.name"
+                placeholder="请输入产品名称"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="产品分类:" prop="type">
+              <el-select
+                style="width: 100%"
+                v-model="ruleForm.type"
+                placeholder="请选择"
               >
-                <el-button type="primary">点击上传</el-button>
-              </el-upload>
-            </div>
-          </el-form-item>
+                <el-option
+                  v-for="item in dynamicTags"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="产品价格:" prop="newprice">
+              <el-input
+                v-model="ruleForm.newprice"
+                placeholder="请输入产品价格"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="产品原价格:" prop="oldprice">
+              <el-input
+                v-model="ruleForm.oldprice"
+                placeholder="请输入产品原价格"
+              ></el-input>
+            </el-form-item>
+
+            <el-form-item label="产品描述:" prop="description">
+              <el-input
+                v-model="ruleForm.description"
+                placeholder="请输入产品描述"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="产品推荐:" prop="recommend">
+              <el-select
+                style="width: 100%"
+                v-model="ruleForm.recommend"
+                placeholder="请选择"
+              >
+                <el-option label="推荐" value="推荐"></el-option>
+                <el-option label="不推荐" value="不推荐"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="产品图片:" prop="productimg">
+              <div style="position: relative">
+                <el-input
+                  placeholder="请上传产品图片"
+                  v-model="ruleForm.productimg"
+                  disabled
+                ></el-input>
+                <el-upload
+                  style="position: absolute; top: 0; right: -110px"
+                  class="upload-demo"
+                  :data="ruleForm"
+                  :action="this.$api.uploadProductImg"
+                  :headers="uploadHeader"
+                  :on-error="onError"
+                  :on-success="handSuccess"
+                  :show-file-list="false"
+                >
+                  <el-button type="primary">点击上传</el-button>
+                </el-upload>
+              </div>
+            </el-form-item>
           </div>
         </el-form>
-        <UE :defaultMsg="ruleForm.details" :config="config" :id="ueId" ref="editor"></UE>
+        <UE
+          :defaultMsg="ruleForm.details"
+          :config="config"
+          :id="ueId"
+          ref="editor"
+        ></UE>
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="uploadBtn('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="uploadBtn('ruleForm')"
+          >确 定</el-button
+        >
       </div>
     </div>
     <!-- 表格区域 -->
@@ -111,7 +166,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-for="(item,index) in tableHeader"
+        v-for="(item, index) in tableHeader"
         :key="index"
         :prop="item.prop"
         :label="item.name"
@@ -124,37 +179,98 @@
             @click.native.prevent="editRow(scope.$index, scope.row)"
             type="text"
             size="small"
-          >编辑</el-button>
+            >编辑</el-button
+          >
           <el-button
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <!-- 分类管理 -->
-    <el-dialog title="产品分类" :visible.sync="typeClass" width="40%">
+    <el-dialog
+      title="产品分类"
+      :visible.sync="typeClass"
+      width="50%"
+      :before-close="iconClose"
+    >
       <span>
-        <el-tag
-          class="mr10 mt10"
-          :key="index +'tag'"
-          v-for="(tag,index) in dynamicTags"
-          closable
-          :disable-transitions="false"
-          @close="tagClose(tag)"
-        >{{tag.type}}</el-tag>
-        <el-input
-          class="input-new-tag mt10"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        ></el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新增分类</el-button>
+        <el-form
+          :model="iconForm"
+          :rules="iconrules"
+          ref="iconForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <el-form-item label="分类名称:" prop="name">
+            <el-input
+              v-model="iconForm.name"
+              placeholder="请输入分类名称"
+              class="new-input"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="展示顺序:" prop="number">
+            <el-input
+              v-model="iconForm.number"
+              placeholder="展示顺序:数值越小越靠前"
+              class="new-input"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="首页导航:" prop="super">
+            <el-select
+              v-model="iconForm.super"
+              placeholder="请选择是否在首页展示"
+              class="new-input"
+            >
+              <el-option label="是" value="是"></el-option>
+              <el-option label="否" value="否"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="图片:" prop="imgurl">
+            <el-upload
+              class="upload-demo"
+              :data="ruleForm"
+              :action="this.$api.uploadIconlImg"
+              :headers="uploadHeader"
+              :on-error="onError"
+              :on-success="iconFormSuccess"
+              :show-file-list="false"
+              :limit="999"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">图标为1:1方形</div>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+        <div class="flex">
+          <div
+            class="mr10"
+            style="width: 100px"
+            v-for="(item, index) in dynamicTags"
+            :key="index + 'img'"
+          >
+            <i
+              class="el-icon-circle-close colorRed pointer"
+              style="font-size: 20px"
+              @click="tagClose(item._id, item.imgurl)"
+            ></i>
+            <img
+              :src="item.imgurl"
+              style="width: 100px; height: 100px; margin: 0 auto"
+            />
+            <div style="text-align: center">{{ item.name }}</div>
+          </div>
+        </div>
       </span>
+      <div class="flex mt10 windBtn">
+        <el-button @click="iconClose">取 消</el-button>
+        <el-button type="primary" @click="uploadIconBtn('iconForm')"
+          >确 定</el-button
+        >
+      </div>
     </el-dialog>
     <!-- 页码条 -->
     <el-pagination
@@ -163,7 +279,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
+      :page-sizes="[find.limit, 20, 50, 100, 200]"
       :page-size="find.limit"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
@@ -172,232 +288,286 @@
 </template>
 
 <script>
-import UE from '@/components/common/UE'
+import UE from "@/components/common/UE";
 export default {
   components: {
-    UE
+    UE,
   },
   data() {
     return {
       uploadHeader: {
-        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {})
-          .token
+        authorization: JSON.parse(sessionStorage.getItem("userInfo") || {})
+          .token,
       },
       config: {
         initialFrameWidth: null,
-        initialFrameHeight: 220
+        initialFrameHeight: 220,
       },
-      classType:'name',
+      iconForm: {
+        name: "", //导航名称
+        number: "", //导航顺序
+        super: "", //是否推荐至首页
+        imgurl: "", //导航图标
+      },
+      iconrules: {
+        name: [{ required: true, message: "请输入分类名称", trigger: "blur" }],
+        number: [
+          {
+            required: true,
+            message: "请输入分类排序：数值越小越靠前",
+            trigger: "blur",
+          },
+        ],
+        super: [
+          { required: true, message: "请输入是否展示到首页", trigger: "blur" },
+        ],
+        imgurl: [
+          { required: true, message: "请上传图标图片", trigger: "blur" },
+        ],
+      },
+      classType: "name",
       dynamicTags: [], //团队标签
       inputVisible: false,
-      inputValue: '',
-      selectInput:'',
-      input: '', //查询框
-      ueId: 'editor5', //多实例情况下使用
+      inputValue: "",
+      selectInput: "",
+      input: "", //查询框
+      ueId: "editor5", //多实例情况下使用
       dialogVisible: false,
       isAdd: true,
       typeClass: false,
       ruleForm: {
-        name: '',
-        description:'', //产品描述
-        recommend:'', //不推荐 推荐
-        type: '',
-        newprice: '',
-        oldprice: '',
-        productimg: '',
-        details: '',
-        time:''
+        name: "",
+        description: "", //产品描述
+        recommend: "", //不推荐 推荐
+        type: "",
+        newprice: "",
+        oldprice: "",
+        productimg: "",
+        details: "",
+        time: "",
       },
       rules: {
-        name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
-        type: [{ required: true, message: '请选择产品分类', trigger: 'blur' }],
+        name: [{ required: true, message: "请输入产品名称", trigger: "blur" }],
+        type: [{ required: true, message: "请选择产品分类", trigger: "blur" }],
         newprice: [
-          { required: true, message: '请输入产品价格', trigger: 'blur' }
+          { required: true, message: "请输入产品价格", trigger: "blur" },
         ],
         productimg: [
-          { required: true, message: '请上传产品图片', trigger: 'blur' }
-        ]
+          { required: true, message: "请上传产品图片", trigger: "blur" },
+        ],
       },
       tableData: [],
       tableHeader: [
-        { name: '产品名称', prop: 'name' },
-        { name: '产品描述', prop: 'description' },
-        { name: '产品类型', prop: 'type' },
-        { name: '产品现价', prop: 'newprice' },
-        { name: '产品推荐', prop: 'recommend' },
-        { name: '创建时间', prop: 'time' }
+        { name: "产品名称", prop: "name" },
+        { name: "产品描述", prop: "description" },
+        { name: "产品类型", prop: "type" },
+        { name: "产品现价", prop: "newprice" },
+        { name: "产品推荐", prop: "recommend" },
+        { name: "创建时间", prop: "time" },
       ],
       find: {
         currentPage: 1, //当前页码
         total: 0, //总页数
         skip: 0, //偏移量
-        limit: 10 //每一页的数量
-      }
-    }
+        limit: 10, //每一页的数量
+      },
+    };
   },
   mounted() {
-    this.getNewsList()
-    this.findTagList()
+    this.getNewsList();
+    this.findTagList();
   },
   methods: {
     async findTagList() {
-      //查询团队
-      await this.$axios.post(this.$api.findProductClass).then(res => {
+      //查询分类图标列表
+      await this.$axios.post(this.$api.findProductClass).then((res) => {
         if (res.code == 200) {
-          this.dynamicTags = res.data
+          this.dynamicTags = res.data;
         }
-      })
+      });
     },
-    async tagClose(tag) {
-      //删除团队标签
-      this.$confirm('此操作将永久删除该产品分类, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+    async tagClose(tag, imgname) {
+      //删除分类图标
+      this.$confirm("此操作将永久删除该产品分类, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
         .then(async () => {
           await this.$axios
-            .post(this.$api.delProductClass, { _id: tag._id })
-            .then(res => {
+            .post(this.$api.delProductClass, { _id: tag })
+            .then(async (res) => {
               if (res.code == 200) {
-                this.findTagList()
+                this.$message.success("删除分类成功");
+                await this.$axios
+                  .post(this.$api.delIconlImg, {
+                    imgurl: imgname,
+                  })
+                  .then((res) => {
+                    if (res.code == 200) {
+                      this.$message.success("删除图标成功");
+                    }
+                  });
+                this.findTagList();
               }
-            })
+            });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
-    showInput() {
-      this.inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-    async handleInputConfirm() {
-      //新增产品分类
-      let inputValue = this.inputValue
-      if (inputValue) {
-        var data = {
-          type: inputValue
-        }
-        await this.$axios.post(this.$api.createProductClass, data).then(res => {
-          if (res.code == 200) {
-            this.dynamicTags.push(res.data)
-          }
-        })
+
+    //产品分类图标上传成功
+    iconFormSuccess(res, file, fileList) {
+      if (res.code == 200) {
+        this.iconForm.imgurl = res.data;
+        this.$message.success("图片上传成功");
       }
-      this.inputVisible = false
-      this.inputValue = ''
     },
-    //上传图片成功钩子
+    //上传产品图片成功钩子
     handSuccess(res, file, fileList) {
       if (res.code == 200) {
-        this.ruleForm.productimg = res.data
-        this.$message.success('图片上传成功')
+        this.ruleForm.productimg = res.data;
+        this.$message.success("图片上传成功");
       }
     },
     onError(err, file, fileList) {
-      this.$message.error('图片上传失败')
+      this.$message.error("图片上传失败");
     },
     handleSizeChange(val) {
-      this.find.limit = val
-      this.getNewsList()
+      this.find.limit = val;
+      this.getNewsList();
     },
     handleCurrentChange(val) {
-      this.find.currentPage = val
-      this.getNewsList()
+      this.find.currentPage = val;
+      this.getNewsList();
     },
-    async findClass(){
+    async findClass() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
         fuzz: this.classType,
-        input: this.selectInput
-      }
-      await this.$axios.post(this.$api.findProduct, data).then(res => {
-        this.tableData = res.data[0].data
-        this.find.total = res.data[0].total[0].total
-      })
-      this.input = ""
+        input: this.selectInput,
+      };
+      await this.$axios.post(this.$api.findProduct, data).then((res) => {
+        this.tableData = res.data[0].data;
+        this.find.total = res.data[0].total[0].total;
+      });
+      this.input = "";
     },
     async getNewsList() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
         fuzz: this.classType,
-        input: this.input
-      }
-      await this.$axios.post(this.$api.findProduct, data).then(res => {
-        this.tableData = res.data[0].data
-        this.find.total = res.data[0].total[0].total
-      })
-      this.selectInput = ""
+        input: this.input,
+      };
+      await this.$axios.post(this.$api.findProduct, data).then((res) => {
+        this.tableData = res.data[0].data;
+        this.find.total = res.data[0].total[0].total;
+      });
+      this.selectInput = "";
     },
     //编辑按钮
     editRow(index, row) {
-      this.dialogVisible = true
-      this.isAdd = false
-      this.ruleForm = row
+      this.dialogVisible = true;
+      this.isAdd = false;
+      this.ruleForm = row;
     },
     //删除行
     deleteRow(index, row) {
-      this.$confirm('确认删除该产品吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("确认删除该产品吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       }).then(() => {
-        this.$axios.post(this.$api.delProductImg, this.ruleForm).then(res => {
-          this.ruleForm.productimg = ''
+        this.$axios.post(this.$api.delProductImg, this.ruleForm).then((res) => {
+          this.ruleForm.productimg = "";
           this.$axios
             .post(this.$api.delateProduct, { _id: row._id })
-            .then(res => {
+            .then((res) => {
               if (res.code == 200) {
-                this.$message.success('删除成功')
-                this.getNewsList()
+                this.$message.success("删除成功");
+                this.getNewsList();
               }
-            })
-        })
-      })
+            });
+        });
+      });
     },
     handleClose() {
       if (this.isAdd) {
         //新增产品时点了删除，要把图片删除
-        this.$axios.post(this.$api.delProductImg, this.ruleForm).then(res => {
+        this.$axios.post(this.$api.delProductImg, this.ruleForm).then((res) => {
           if (res.code == 200) {
-            this.ruleForm.productimg = ''
+            this.ruleForm.productimg = "";
           }
-        })
+        });
       }
-      this.dialogVisible = false
+      this.dialogVisible = false;
     },
+    //上传产品图片
     async uploadBtn(formName) {
-      this.$refs[formName].validate(async valid => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          this.ruleForm.details = this.$refs.editor.getUEContent()
+          this.ruleForm.details = this.$refs.editor.getUEContent();
           if (this.isAdd) {
             //新增
-            delete this.ruleForm._id
+            delete this.ruleForm._id;
             var res = await this.$axios.post(
               this.$api.uploadProduct,
               this.ruleForm
-            )
+            );
           } else {
             var res = await this.$axios.post(
               this.$api.updataProduct,
               this.ruleForm
-            )
+            );
           }
           if (res.code == 200) {
-            this.$message.success('操作成功')
-            this.dialogVisible = false
-            this.getNewsList()
+            this.$message.success("操作成功");
+            this.dialogVisible = false;
+            this.getNewsList();
           }
         } else {
-          return false
+          return false;
         }
-      })
-    }
-  }
-}
+      });
+    },
+    //创建产品分类
+    async uploadIconBtn(formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          var res = await this.$axios.post(
+            this.$api.createProductClass,
+            this.iconForm
+          );
+          if (res.code == 200) {
+            this.$message.success("创建分类成功");
+            this.findTagList();
+            this.iconForm.imgurl = "";
+            this.typeClass = false;
+          }
+        } else {
+          return false;
+        }
+      });
+    },
+    //删除分类图标
+    async iconClose() {
+      if (this.iconForm.imgurl) {
+        await this.$axios
+          .post(this.$api.delIconlImg, {
+            imgurl: this.iconForm.imgurl,
+          })
+          .then((res) => {
+            if (res.code == 200) {
+              this.iconForm.imgurl = "";
+              this.$message.success("删除图标成功");
+            }
+          });
+      }
+      this.typeClass = false;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -416,7 +586,10 @@ export default {
 .findInput {
   width: 500px;
 }
-.el-tag + .el-tag {
+.new-input {
+  width: 220px !important;
+}
+/* .el-tag + .el-tag {
   margin-left: 10px;
 }
 .button-new-tag {
@@ -430,5 +603,5 @@ export default {
   width: 90px;
   margin-left: 10px;
   vertical-align: bottom;
-}
+} */
 </style>
