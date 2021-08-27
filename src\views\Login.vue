@@ -9,11 +9,11 @@
             <span class="compants color2">众创空间</span>
           </div>
         </div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex">
-          <el-form-item label prop="uid" class="mt30">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex" >
+          <el-form-item label prop="uid" class="mt30" style="margin-left:25px">
             <el-input v-model="ruleForm.uid" placeholder="请输入账号"></el-input>
           </el-form-item>
-          <el-form-item label prop="password">
+          <el-form-item label prop="password" style="margin-left:25px">
             <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-button @click="submitForm('ruleForm')" class="subBtn">登录</el-button>
