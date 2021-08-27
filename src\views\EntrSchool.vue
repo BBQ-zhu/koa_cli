@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <div class="flex header">
-      <el-button type="primary" icon="el-icon-upload" @click="dialogVisible=true">上传视频</el-button>
-      <div class="el-upload__tip ml10" slot="tip" style="line-height:33px;">视频内容不得超过1G</div>
+      <el-button type="primary" icon="el-icon-upload" @click="clickDown">上传视频</el-button>
+      <div class="el-upload__tip ml10" slot="tip" style="line-height:33px;">视频内容不易过大</div>
       <el-dialog
         title="上传视频"
         :visible.sync="dialogVisible"
@@ -12,6 +12,20 @@
         <span>
           <el-input v-model="videoData.videoName" class="mb20" placeholder="请输入视频名称"></el-input>
           <el-upload
+            class="upload-demo mb20"
+            :data="videoData"
+            :action="this.$api.uploadIconlImg"
+            :headers="uploadHeader"
+            :on-error="onError"
+            :file-list="fileList"
+            :on-success="imgSuccess"
+            :show-file-list="true"
+            :limit="1"
+          >
+            <el-button size="small" type="primary">视频封面上传</el-button>
+            <span slot="tip" class="el-upload__tip">比例为16：9</span>
+          </el-upload>
+          <el-upload
             class="upload-demo"
             drag
             :data="videoData"
@@ -20,13 +34,11 @@
             :before-upload="beforeUploadVideo"
             :on-success="onSuccess"
             :on-error="onError"
-            :on-progress="onProgress"
-            :limit="1"
-
+            :show-file-list="false"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
-              将文件拖到此处，或
+              视频文件拖到此处，或
               <em>点击上传</em>
             </div>
           </el-upload>
@@ -42,14 +54,15 @@
     <div class="videoList">
       <div v-for="(item,index) in videoList" :key="index" class="mt10" style="width:260px">
         <div class="mr10">
-          <video width="240" height="120" controls style="border:2px solid #213446">
+          <!-- <img v-if="showViode" :src="item.videoimg" width="240" height="135" @click="showViode = false"/>  -->
+          <video width="240" height="135" controls style="border:2px solid #213446">
             <source :src="item.videourl" />您的浏览器不支持Video标签。
           </video>
           <div class="mt10 flowellipsis">
             <i
               slot="reference"
               class="el-icon-delete-solid f20 colorRed mr10"
-              @click="delBtn(item._id,item.videourl)"
+              @click="delBtn(item._id,item.videourl,item.videoimg)"
             ></i>
             {{item.videoname}}
           </div>
@@ -64,13 +77,17 @@ export default {
   data() {
     return {
       uploadHeader: {
-        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {}).token
+        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {})
+          .token
       },
       dialogVisible: false,
       visible: false,
+      showViode: true,
+      fileList: [],
       number: 0,
       videoData: {
-        videoName: ''
+        videoName: '',
+        videoImg: ''
       },
       videoList: []
     }
@@ -79,6 +96,12 @@ export default {
     this.findVideo()
   },
   methods: {
+    clickDown(){
+      this.dialogVisible=true
+      this.videoData.videoName = '';
+      this.videoData.videoImg = '';
+      this.fileList = []
+    },
     //查询视频列表
     async findVideo() {
       await this.$axios.post(this.$api.findVideo).then(res => {
@@ -91,6 +114,10 @@ export default {
     beforeUploadVideo(file) {
       if (!this.videoData.videoName) {
         this.$message.error('请先输入文件名称')
+        return false
+      }
+      if (!this.videoData.videoImg) {
+        this.$message.error('请先上传视频封面')
         return false
       }
       if (
@@ -108,17 +135,25 @@ export default {
         return false
       }
     },
-
-    //成功
+    //封面上传成功
+    imgSuccess(res, file, fileList) {
+      if (res.code == 200) {
+        this.videoData.videoImg = res.data
+        this.$message.success('封面上传成功')
+      }
+    },
+    //视频上传成功
     onSuccess(res, file, fileList) {
       if (res.code == 200) {
         this.number = 100
+        this.$message.success('视频上传成功')
       }
     },
     //出错
     onError(err, file, fileList) {
       this.$message.error('上传失败')
       this.videoData.videoName = ''
+      this.videoData.videoImg = ''
       this.number = 0
     },
     //上传中
@@ -129,6 +164,8 @@ export default {
     uploadAdd() {
       if (!this.videoData.videoName) {
         this.$message.error('请输入文件名')
+      } else if (this.videoData.videoImg == '') {
+        this.$message.error('请上传封面')
       } else if (this.number == 0) {
         this.$message.error('请上传文件')
       } else if (this.number != 0 && this.number != 100) {
@@ -145,13 +182,16 @@ export default {
       this.number = 0
       this.dialogVisible = false
     },
-    delBtn(_id, videourl) {
+    delBtn(_id, videourl,videoImg) {
       this.$confirm('确认删除该视频？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.delVideo(_id, videourl)
+        this.$axios.post(this.$api.delateVideoImg,{videoImg:videoImg}).then(res => {
+          
+        })
       })
     },
     //删除
