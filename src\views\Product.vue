@@ -229,19 +229,27 @@
               <el-option label="否" value="否"></el-option>
             </el-select>
           </el-form-item>
+
           <el-form-item label="图片:" prop="imgurl">
+            <el-input
+              disabled
+              v-model="iconForm.imgurl"
+              placeholder="图片访问地址"
+              class="new-input"
+            ></el-input>
             <el-upload
               class="upload-demo"
               :data="ruleForm"
               :action="this.$api.uploadIconlImg"
               :headers="uploadHeader"
               :on-error="onError"
+              :file-list="fileList"
               :on-success="iconFormSuccess"
               :show-file-list="false"
-              :limit="999"
+              :limit="1"
             >
               <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">图标为1:1方形</div>
+              <span slot="tip" class="el-upload__tip">图标为1:1方形</span>
             </el-upload>
           </el-form-item>
         </el-form>
@@ -279,8 +287,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100, 200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100, 200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
@@ -325,6 +333,7 @@ export default {
           { required: true, message: "请上传图标图片", trigger: "blur" },
         ],
       },
+      fileList:[],
       classType: "name",
       dynamicTags: [], //团队标签
       inputVisible: false,
@@ -414,11 +423,11 @@ export default {
         })
         .catch(() => {});
     },
-
     //产品分类图标上传成功
     iconFormSuccess(res, file, fileList) {
       if (res.code == 200) {
         this.iconForm.imgurl = res.data;
+        this.fileList = []
         this.$message.success("图片上传成功");
       }
     },
