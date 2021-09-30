@@ -1,7 +1,7 @@
 <template>
   <div class="flex flexCenter">
     <div class="card1" style="width:49%">
-      <div class="flex header">
+      <div class="flex header" v-if="meth[0]">
         <el-input
           class="mr20"
           style="width:217px"
@@ -28,9 +28,22 @@
         ref="tree"
         highlight-current
         :props="defaultProps"
-      ></el-tree>
+      >
+
+        <span class="custom-tree-node flexBetween" slot-scope="{ node, data }">
+        <div>{{ node.label }}</div>
+        <el-checkbox-group v-model="data.meth" v-if="!data.children" style="margin-left:40px">
+          <el-checkbox label="新增"></el-checkbox>
+          <el-checkbox label="删除"></el-checkbox>
+          <el-checkbox label="修改"></el-checkbox>
+          <el-checkbox label="查询" disabled></el-checkbox>
+        </el-checkbox-group>
+      </span>
+
+      </el-tree>
       <div class="mt20">
         <el-button
+          v-if="meth[2]"
           size="small"
           type="primary"
           icon="el-icon-edit"
@@ -38,6 +51,7 @@
           :disabled="roleLoading"
         >更新权限</el-button>
         <el-button
+          v-if="meth[1]"
           size="small"
           type="danger"
           icon="el-icon-delete"
@@ -48,7 +62,7 @@
     </div>
 
     <div class="card1" style="width:49%;margin-left:1%">
-      <div class="flex header">
+      <div class="flex header" v-if="meth[0]">
         <el-input
           class="mr20"
           style="width:217px"
@@ -65,7 +79,7 @@
           :key="item.teamname"
           closable
           :type="item.type"
-          @close="handleClose(item)"
+          @close="meth[1] && handleClose(item)"
         >{{item.teamname}}</el-tag>
       </div>
     </div>
@@ -76,6 +90,7 @@
 export default {
   data() {
     return {
+      checkList:['新增'],
       //团队数据
       teamName: '',
       tags: ['', 'success', 'info', 'warning', 'danger'],
@@ -94,11 +109,15 @@ export default {
       teamList: []
     }
   },
-  mounted() {
+  async mounted() {
+
+    this.mixinMethod(this.$route.path)
+
     //查询菜单导航
     this.$axios.post(this.$api.findNavMenus).then(res => {
       if (res.code == 200) {
         this.navList = res.data
+        // console.log(this.navList)
         this.findRoleList()
         this.findteam()
       }
@@ -122,7 +141,7 @@ export default {
     },
     findteam() {
       //查询团队
-      this.$axios.get(this.$api.findTeam).then(res => {
+      this.$axios.post(this.$api.findTeam).then(res => {
         if (res.code == 200) {
           this.teamList = res.data
           var k = 0
@@ -160,24 +179,60 @@ export default {
     },
     //角色切换事件
     collapse() {
-      console.log(this.rloeValue)
       for (let item of this.roleLists) {
         if (this.rloeValue == item._id) {
-          this.check = item
+          this.check = item //角色信息
+          this.changePer(item.navList)
         }
       }
-
       this.$refs.tree.setCheckedKeys(this.check.roleList)
+    },
+    //将当前角色的操作权限赋值给导航菜单
+    changePer(rolePer){
+      if(!rolePer){
+        return
+      }
+      for(let i=0;i<this.navList.length;i++){
+        for(let j=0;j<this.navList[i].children.length;j++){
+          let path = this.navList[i].children[j].path
+
+          let isOk = false
+          for(let k=0;k<rolePer.length;k++){
+            for(let n=0;n<rolePer[k].children.length;n++){
+              if(path == rolePer[k].children[n].path){
+                isOk = true
+                if(rolePer[k].children[n].meth){
+                  this.navList[i].children[j].meth = ['查询']
+                  rolePer[k].children[n].meth.map(item=>{
+                    if(item != '查询'){
+                      this.navList[i].children[j].meth.push(item)
+                    }
+                  })
+                }else{
+                  this.navList[i].children[j].meth = ['查询']
+                }
+                break;
+              }
+            }
+            if(isOk){
+              break
+            }
+          }
+
+        }
+      }
+      console.log(this.navList)
     },
     //更新角色权限
     updateRole() {
-      console.log(this.$refs.tree.getCheckedNodes())
+      // console.log(this.$refs.tree.getCheckedNodes())
       if (!this.rloeValue) {
         this.$message.error('请先选择角色')
         return
       }
       let roleList = this.$refs.tree.getCheckedKeys()
       this.check.roleList = roleList
+      this.check.navList = this.navList
       this.$axios.post(this.$api.updateRole, this.check).then(res => {
         if (res.code == 200) {
           this.$message({
