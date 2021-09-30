@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="header flex">
-      <el-button type="primary" icon="el-icon-upload" @click="upload">上传客户资料</el-button>
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="upload">上传客户资料</el-button>
       <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
         <el-select v-model="select" slot="prepend" placeholder="请选择" style="width:130px">
           <el-option
@@ -48,7 +48,7 @@
                   <el-input v-model="ruleForm.tenor" placeholder="请输入贷款期限"></el-input>
                 </el-form-item>
                 <el-form-item label="婚姻状况:" prop="matrimony">
-                  <el-select v-model="ruleForm.matrimony" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.matrimony" placeholder="请选择">
                     <el-option label="已婚" value="已婚"></el-option>
                     <el-option label="未婚" value="未婚"></el-option>
                     <el-option label="离异" value="离异"></el-option>
@@ -59,7 +59,7 @@
                   <el-input v-model="ruleForm.children" placeholder="请输入子女情况"></el-input>
                 </el-form-item>
                 <el-form-item label="配偶是否知晓:" prop="knowing">
-                  <el-select v-model="ruleForm.knowing" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.knowing" placeholder="请选择">
                     <el-option label="知晓" value="知晓"></el-option>
                     <el-option label="不知晓" value="不知晓"></el-option>
                   </el-select>
@@ -75,7 +75,7 @@
             <el-collapse-item title="收入情况" name="2">
               <div class="flex">
                 <el-form-item label="雇佣类型:" prop="hires">
-                  <el-select v-model="ruleForm.hires" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.hires" placeholder="请选择">
                     <el-option label="自顾" value="自顾"></el-option>
                     <el-option label="工薪" value="工薪"></el-option>
                   </el-select>
@@ -99,7 +99,7 @@
                   <el-input v-model="ruleForm.revenue" placeholder="请输入月收入"></el-input>
                 </el-form-item>
                 <el-form-item label="是否有公积金:" prop="provident">
-                  <el-select v-model="ruleForm.provident" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.provident" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
@@ -118,7 +118,7 @@
             <el-collapse-item title="房屋情况" name="3">
               <div class="flex">
                 <el-form-item label="是否有房:" prop="houses">
-                  <el-select v-model="ruleForm.houses" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.houses" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
@@ -136,19 +136,19 @@
                   <el-input v-model="ruleForm.housearea" placeholder="请输入房屋面积"></el-input>
                 </el-form-item>
                 <el-form-item label="房屋类型:" prop="housetype">
-                  <el-select v-model="ruleForm.housetype" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.housetype" placeholder="请选择">
                     <el-option label="自建房" value="自建房"></el-option>
                     <el-option label="商品房" value="商品房"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="购买方式:" prop="houpayment">
-                  <el-select v-model="ruleForm.houpayment" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.houpayment" placeholder="请选择">
                     <el-option label="全款" value="全款"></el-option>
                     <el-option label="按揭" value="按揭"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否抵押:" prop="houmortgage">
-                  <el-select v-model="ruleForm.houmortgage" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.houmortgage" placeholder="请选择">
                     <el-option label="已抵押" value="已抵押"></el-option>
                     <el-option label="未抵押" value="未抵押"></el-option>
                   </el-select>
@@ -161,7 +161,7 @@
             <el-collapse-item title="车辆情况" name="4">
               <div class="flex">
                 <el-form-item label="是否有车:" prop="car">
-                  <el-select v-model="ruleForm.car" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.car" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
@@ -176,7 +176,7 @@
                   <el-input v-model="ruleForm.carprice" placeholder="请输入评估价格"></el-input>
                 </el-form-item>
                 <el-form-item label="购买方式:" prop="carpayment">
-                  <el-select v-model="ruleForm.carpayment" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.carpayment" placeholder="请选择">
                     <el-option label="按揭" value="按揭"></el-option>
                     <el-option label="全款" value="全款"></el-option>
                   </el-select>
@@ -189,7 +189,7 @@
             <el-collapse-item title="保单情况" name="5">
               <div class="flex">
                 <el-form-item label="商业保险:" prop="policy">
-                  <el-select v-model="ruleForm.policy" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.policy" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
@@ -208,25 +208,25 @@
             <el-collapse-item title="数据情况" name="6">
               <div class="flex">
                 <el-form-item label="征信白名单:" prop="credit">
-                  <el-select v-model="ruleForm.credit" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.credit" placeholder="请选择">
                     <el-option label="是" value="是"></el-option>
                     <el-option label="否" value="否"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否有官司:" prop="lawsuits">
-                  <el-select v-model="ruleForm.lawsuits" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.lawsuits" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否有案底:" prop="record">
-                  <el-select v-model="ruleForm.record" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.record" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="不良嗜好:" prop="hobbies">
-                  <el-select v-model="ruleForm.hobbies" placeholder="请选择">
+                  <el-select style="width:100%" v-model="ruleForm.hobbies" placeholder="请选择">
                     <el-option label="有" value="有"></el-option>
                     <el-option label="无" value="无"></el-option>
                   </el-select>
@@ -239,7 +239,7 @@
                   <el-input v-model="ruleForm.contacts1" placeholder="请输入第一联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat1">
-                  <el-select v-model="ruleForm.conrelat1" placeholder="请选择与第一联系人关系">
+                  <el-select style="width:100%" v-model="ruleForm.conrelat1" placeholder="请选择与第一联系人关系">
                     <el-option label="配偶" value="配偶"></el-option>
                     <el-option label="直系亲属" value="直系亲属"></el-option>
                     <el-option label="朋友" value="朋友"></el-option>
@@ -253,7 +253,7 @@
                   <el-input v-model="ruleForm.contacts2" placeholder="请输入第二联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat2">
-                  <el-select v-model="ruleForm.conrelat2" placeholder="请选择与第二联系人关系">
+                  <el-select style="width:100%" v-model="ruleForm.conrelat2" placeholder="请选择与第二联系人关系">
                     <el-option label="配偶" value="配偶"></el-option>
                     <el-option label="直系亲属" value="直系亲属"></el-option>
                     <el-option label="朋友" value="朋友"></el-option>
@@ -267,7 +267,7 @@
                   <el-input v-model="ruleForm.contacts3" placeholder="请输入第三联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat3">
-                  <el-select v-model="ruleForm.conrelat3" placeholder="请选择与第三联系人关系">
+                  <el-select style="width:100%" v-model="ruleForm.conrelat3" placeholder="请选择与第三联系人关系">
                     <el-option label="配偶" value="配偶"></el-option>
                     <el-option label="直系亲属" value="直系亲属"></el-option>
                     <el-option label="朋友" value="朋友"></el-option>
@@ -281,7 +281,7 @@
                   <el-input v-model="ruleForm.contacts4" placeholder="请输入第四联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat4">
-                  <el-select v-model="ruleForm.conrelat4" placeholder="请选择与第四联系人关系">
+                  <el-select style="width:100%" v-model="ruleForm.conrelat4" placeholder="请选择与第四联系人关系">
                     <el-option label="配偶" value="配偶"></el-option>
                     <el-option label="直系亲属" value="直系亲属"></el-option>
                     <el-option label="朋友" value="朋友"></el-option>
@@ -293,6 +293,26 @@
                 </el-form-item>
               </div>
             </el-collapse-item>
+            <el-collapse-item title="审核情况" name="8">
+              <div class="flex">
+                <el-form-item label="客户经理:" prop="manager1">
+                  <el-input v-model="ruleForm.manager1" placeholder="请输入客户经理工号"></el-input>
+                </el-form-item>
+                <el-form-item label="权证经理:" prop="manager2">
+                  <el-input v-model="ruleForm.manager2" placeholder="请输入权证经理工号"></el-input>
+                </el-form-item>
+                <el-form-item label="审核经理:" prop="manager3">
+                  <el-input v-model="ruleForm.manager3" placeholder="请输入审核经理工号"></el-input>
+                </el-form-item>
+                <el-form-item label="审核状态:" prop="status">
+                  <el-select style="width:100%" v-model="ruleForm.status" placeholder="请选择审核状态">
+                    <el-option label="待审核" value="待审核"></el-option>
+                    <el-option label="驳回" value="驳回"></el-option>
+                    <el-option label="通过" value="通过"></el-option>
+                  </el-select>
+                </el-form-item> 
+              </div>
+            </el-collapse-item>
           </el-collapse>
         </el-form>
         <div class="title mt20 mb20">备注信息</div>
@@ -300,7 +320,7 @@
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="uploadBtn('ruleForm')">确 定</el-button>
+        <el-button type="primary" v-if="meth[0] || meth[2]" @click="uploadBtn('ruleForm')">确 定</el-button>
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
@@ -320,6 +340,7 @@
             size="small"
           >编辑</el-button>
           <el-button
+            v-if="meth[1]"
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -334,8 +355,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100,200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
@@ -419,21 +440,30 @@ export default {
         contacts4: '', //紧急联系人4
         conphone4: '', //联系人电话4
         conrelat4: '', //联系人的关系4
-        remarks: '' //备注信息
+        manager1:'', //客户经理
+        manager2:'', //权证经理
+        manager3:'', //审核经理
+        status:'待审核', //审核状态
+        remarks: '',  //备注信息
+        time:'' //创建时间
       },
       cloneRuleForm:{}, //用于备份
       rules: {
         name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
-        phone: [{ required: true, message: '请输入客户电话', trigger: 'blur' }]
+        phone: [{ required: true, message: '请输入客户电话', trigger: 'blur' }],
+        manager1: [{ required: true, message: '请输入客户经理工号', trigger: 'blur' }],
+        manager2: [{ required: true, message: '请输入权证经理工号', trigger: 'blur' }]
       },
       tableData: [],
       tableHeader: [
         { name: '客户姓名', prop: 'name' },
         { name: '客户电话', prop: 'phone' },
         { name: '身份证号', prop: 'idcard' },
-        { name: '年龄', prop: 'age' },
         { name: '需求资金', prop: 'fund' },
-        { name: '贷款期限', prop: 'tenor' }
+        { name: '客户经理', prop: 'manager1' },
+        { name: '权证经理', prop: 'manager2' },
+        { name: '审核经理', prop: 'manager3' },
+        { name: '创建时间', prop: 'time' }
       ],
       find: {
         currentPage: 1, //当前页码
@@ -444,6 +474,7 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
     this.cloneRuleForm = JSON.parse(JSON.stringify(this.ruleForm))
     this.getNewsList()
   },
