@@ -55,8 +55,14 @@
 .color3{
   color: #8699ad;
 }
+.colorYellow {
+  color: #ff6600;
+}
 .colorRed{
   color:#F56C6C;
+}
+.colorBlue {
+  color: #45b2fd;
 }
 .bgColor{
   background-color: #2b3a4a;
@@ -81,6 +87,11 @@
   justify-content: center;
 
 }
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
 .tableImg{
   width:40px;
   height:40px;
@@ -99,4 +110,3 @@
 .findInput {
   width: 400px;
 }
-
