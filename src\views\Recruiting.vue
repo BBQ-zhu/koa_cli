@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="header">
-      <el-button type="primary" icon="el-icon-upload" @click="dialogVisible=true,isAdd=true">上传招聘信息</el-button>
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="dialogVisible=true,isAdd=true">上传招聘信息</el-button>
     </div>
     <div v-if="dialogVisible" class="window">
       <span>
@@ -10,8 +10,8 @@
           :rules="rules"
           ref="ruleForm"
           label-width="100px"
-          class="demo-ruleForm"
-          style="width:40%"
+          class="demo-ruleForm flex"
+          style="width:90%"
         >
           <el-form-item label="招聘职位:" prop="name">
             <el-input v-model="ruleForm.name" placeholder="请输入招聘职位"></el-input>
@@ -30,7 +30,7 @@
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="uploadBtn('ruleForm')">确 定</el-button>
+        <el-button type="primary" v-if="meth[0] || meth[2]" @click="uploadBtn('ruleForm')">确 定</el-button>
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
@@ -50,6 +50,7 @@
             size="small"
           >编辑</el-button>
           <el-button
+            v-if="meth[1]"
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -64,8 +65,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100,200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
@@ -117,6 +118,7 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
     this.getNewsList()
   },
   methods: {
