@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="flex header">
-      <el-button type="primary" icon="el-icon-upload" @click="clickDown">上传视频</el-button>
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="clickDown">上传视频</el-button>
       <div class="el-upload__tip ml10" slot="tip" style="line-height:33px;">视频内容不易过大</div>
       <el-dialog
         title="上传视频"
@@ -14,7 +14,7 @@
           <el-upload
             class="upload-demo mb20"
             :data="videoData"
-            :action="this.$api.uploadIconlImg"
+            :action="this.$api.uploadVideoImg"
             :headers="uploadHeader"
             :on-error="onError"
             :file-list="fileList"
@@ -54,12 +54,16 @@
     <div class="videoList">
       <div v-for="(item,index) in videoList" :key="index" class="mt10" style="width:260px">
         <div class="mr10">
-          <!-- <img v-if="showViode" :src="item.videoimg" width="240" height="135" @click="showViode = false"/>  -->
-          <video width="240" height="135" controls style="border:2px solid #213446">
+          <div v-if="item.show" class="pointer" style="position:relative;" @click="schoolChange(index)">
+            <img :src="item.videoimg" width="240" height="135" />
+            <i class="el-icon-video-play color3" style="position:absolute;top:60px;left:110px;font-size:30px"></i>
+          </div>
+          <video v-else width="240" height="135" controls style="border:2px solid #213446">
             <source :src="item.videourl" />您的浏览器不支持Video标签。
           </video>
           <div class="mt10 flowellipsis">
             <i
+              v-if="meth[1]"
               slot="reference"
               class="el-icon-delete-solid f20 colorRed mr10"
               @click="delBtn(item._id,item.videourl,item.videoimg)"
@@ -77,7 +81,7 @@ export default {
   data() {
     return {
       uploadHeader: {
-        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {})
+        authorization: JSON.parse(sessionStorage.getItem('userInfo') || '{}')
           .token
       },
       dialogVisible: false,
@@ -93,6 +97,9 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
+    console.log(this.meth)
+
     this.findVideo()
   },
   methods: {
@@ -106,9 +113,25 @@ export default {
     async findVideo() {
       await this.$axios.post(this.$api.findVideo).then(res => {
         if (res.code == 200) {
-          this.videoList = res.data
+          this.videoList = []
+          let arr = res.data
+          arr.map(item=>{
+            let obj = {}
+            obj._id = item._id
+            obj.videoimg = item.videoimg
+            obj.videourl = item.videourl
+            obj.videoname = item.videoname
+            obj.show = true
+            this.videoList.push(obj)
+          })
         }
       })
+    },
+    schoolChange(index){
+      this.videoList.map((item=>{
+        item.show = true
+      }))
+      this.videoList[index].show = false
     },
     //上传前回调
     beforeUploadVideo(file) {
@@ -138,7 +161,9 @@ export default {
     //封面上传成功
     imgSuccess(res, file, fileList) {
       if (res.code == 200) {
+
         this.videoData.videoImg = res.data
+        this.$logsImg.createlogsImg(this.$api.uploadVideoImg,this.videoData.videoImg) //添加操作日志
         this.$message.success('封面上传成功')
       }
     },
@@ -146,6 +171,7 @@ export default {
     onSuccess(res, file, fileList) {
       if (res.code == 200) {
         this.number = 100
+        this.$logsImg.createlogsImg(this.$api.uploadVideo,this.videoData.videoName) //添加操作日志
         this.$message.success('视频上传成功')
       }
     },
@@ -187,18 +213,17 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.delVideo(_id, videourl)
-        this.$axios.post(this.$api.delateVideoImg,{videoImg:videoImg}).then(res => {
-          
-        })
+      }).then(async () => {
+        await this.delVideo(_id, videourl)
+        await this.$axios.post(this.$api.delateVideoImg,{videoImg:videoImg})
       })
     },
     //删除
-    delVideo(_id, videourl) {
+    async delVideo(_id, videourl) {
+      console.log(_id, videourl)
       var index = videourl.lastIndexOf('/')
       var fileName = videourl.slice(index + 1)
-      this.$axios
+      await this.$axios
         .post(this.$api.delateVideo, { _id: _id, fileName: fileName })
         .then(res => {
           if (res.code == 200) {
