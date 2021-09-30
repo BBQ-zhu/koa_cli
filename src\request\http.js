@@ -2,6 +2,8 @@ import axios from "axios";
 import QS from 'qs';
 import {Message} from 'element-ui';
 import router from '../router'
+import api from './api';
+import {createlogs} from './logs';
 
 const baseURL = '/api'
 // 环境的切换
@@ -19,12 +21,15 @@ axios.defaults.timeout = 10000;
 //给post设置请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
+
+
 //请求拦截器：校验用户token是否有效
 axios.interceptors.request.use((config) => {
   if (sessionStorage.getItem('userInfo')) {
     var userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
-    config.headers['Authorization'] = userInfo.token
+    config.headers['Authorization'] = userInfo.token;
   }
+  
   return config
 })
 
@@ -81,7 +86,10 @@ export function get(url, params) {
 export function post(url, params) {
   return new Promise((resolve, reject) => {
     axios.post(url, QS.stringify(params || {}))
-      .then(res => {
+      .then(async res => {
+        if(res.data.code == 200){
+          await createlogs(url, params) //创建日志
+        }
         resolve(res.data);
       })
       .catch(err => {
@@ -89,3 +97,4 @@ export function post(url, params) {
       })
   });
 }
+
