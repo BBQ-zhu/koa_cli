@@ -43,7 +43,6 @@ export default {
   mounted() {
     //将导航菜单放入路由中
     var arr = this.$router.options.routes
-    console.log(arr)
     var newRouter = []
     for (let item of arr) {
       if (item.path != '/') {
