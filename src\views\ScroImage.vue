@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="flex header">
-      <el-button type="primary" icon="el-icon-plus" @click="dialogVisible = true">新增轮播图</el-button>
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-plus" @click="dialogVisible = true">新增轮播图</el-button>
       <div class="f12 color3 ml10 mt20">上传的图片请先压缩处理</div>
     </div>
     <el-collapse v-model="activeNames">
@@ -9,16 +9,17 @@
         v-for="(item,index) in scrolLists"
         :key="item.typeId"
         :title="item.type"
-        :name="index"
+        :name="index+1"
       >
         <div
           v-for="(children,indec) in item.imgList"
           :key="indec+'img'"
           class="ml10 mt10"
-          style="position:relative"
+          style="position:relative;"
         >
           <img :src="children.scroimg" class="scroImg" />
-          <i class="el-icon-close colorRed delIcon pointer" @click="delImg(index,indec,children)"></i>
+          <i v-if="meth[1]" class="el-icon-close colorRed delIcon pointer" @click="delImg(index,indec,children)"></i>
+          <div style="text-align:center">跳转至：{{children.link}}</div>
         </div>
       </el-collapse-item>
     </el-collapse>
@@ -33,8 +34,11 @@
           label-width="100px"
           class="demo-ruleForm flex"
         >
-          <el-form-item label="位置:" prop="typeId">
-            <el-select v-model="ruleForm.typeId" placeholder="请选择展示位置">
+          <el-form-item label="跳转产品:" prop="link">
+            <el-input v-model="ruleForm.link" placeholder="例：工商注册"></el-input>
+          </el-form-item>
+          <el-form-item label="展示位置:" prop="typeid">
+            <el-select v-model="ruleForm.typeid" placeholder="请选择展示位置">
               <el-option
                 v-for="item in scrolLists"
                 :key="item.typeId"
@@ -43,7 +47,7 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="图片:" prop="imgurl">
+          <el-form-item label="轮播图片:" prop="imgurl">
             <el-upload
               class="upload-demo"
               :data="ruleForm"
@@ -70,7 +74,7 @@ export default {
   data() {
     return {
       uploadHeader: {
-        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {})
+        authorization: JSON.parse(sessionStorage.getItem('userInfo') || '{}')
           .token
       },
       imgLimit: 100,
@@ -78,45 +82,62 @@ export default {
       scrollImgData: '',
       scrolLists: [
         {
-          type: '移动端首页',
+          type: '移动端-首页',
           typeId: 'mobScroll',
           imgList: []
         },
         {
-          type: '移动端分类',
+          type: '移动端-分类',
           typeId: 'mobClass',
           imgList: []
         },
         {
-          type: '我的企业',
+          type: '移动端-新闻列表',
+          typeId: 'news',
+          imgList: []
+        },
+        {
+          type: '移动端-加入我们',
+          typeId: 'joinUs',
+          imgList: []
+        },
+        {
+          type: '移动端-商务合作',
+          typeId: 'business',
+          imgList: []
+        },
+        {
+          type: '移动端-我的企业',
           typeId: 'myBusiness',
           imgList: []
         },
         {
-          type: '我的金融',
+          type: '移动端-我的金融',
           typeId: 'myFinances',
           imgList: []
         },
         {
-          type: '推荐客户',
+          type: '移动端-推荐客户',
           typeId: 'referCustomers',
           imgList: []
         },
         {
-          type: 'PC端首页',
+          type: 'PC端-首页',
           typeId: 'pcScroll',
           imgList: []
         },
         {
-          type: 'PC端推荐',
+          type: 'PC端-推荐',
           typeId: 'pcPicks',
           imgList: []
         }
       ],
       dialogVisible: false,
       ruleForm: {
-        typeId: '',
-        imgurl: ''
+        typeid: '',
+        link: '',
+        imgurl: '',
+        bgcolor: ''
       },
       rules: {
         typeId: [
@@ -127,11 +148,14 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
+    console.log(this.meth)
+    
     this.findScrollImg()
   },
   methods: {
     findScrollImg() {
-      this.$axios.get(this.$api.findScrollImg).then(res => {
+      this.$axios.post(this.$api.findScrollImg).then(res => {
         if (res.code == 200) {
           var arr = res.data
           for (let i = 0; i < arr.length; i++) {
@@ -152,7 +176,7 @@ export default {
       this.$message.error('上传失败')
     },
     beforeUpload() {
-      if (!this.ruleForm.typeId) {
+      if (!this.ruleForm.typeid) {
         this.$message.error('请先选择展示位置')
       }
     },
@@ -187,8 +211,9 @@ export default {
             item.imgList.push(res.data)
           }
         }
+        this.$logsImg.createlogsImg(this.$api.uploadScrollImg, '上传轮播图片') //添加操作日志
         this.$message.success('上传成功')
-        // this.dialogVisible = false
+        this.dialogVisible = false
       }
     }
   }
@@ -215,5 +240,9 @@ export default {
 }
 ::v-deep .el-collapse-item__content {
   display: flex;
+}
+::v-deep .el-collapse-item__header {
+  font-size: 14px;
+  font-weight: 600;
 }
 </style>
