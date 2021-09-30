@@ -1,8 +1,13 @@
 <template>
   <div class="card">
     <div class="header flex">
-      <el-button type="primary" icon="el-icon-upload" @click="upload">上传企业资料</el-button>
-      <el-select class="ml20" v-model="selectInput" placeholder="请选择" @change="classType = 'type',findClass()">
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="upload">上传企业资料</el-button>
+      <el-select
+        class="ml20"
+        v-model="selectInput"
+        placeholder="请选择"
+        @change="classType = 'type',findClass()"
+      >
         <el-option lable="代理记账" value="代理记账"></el-option>
         <el-option lable="企业注册" value="企业注册"></el-option>
       </el-select>
@@ -29,7 +34,7 @@
         >
           <div class="flex">
             <el-form-item label="业务类型:" prop="type">
-              <el-select v-model="ruleForm.type" placeholder="请选择业务类型">
+              <el-select style="width:100%" v-model="ruleForm.type" placeholder="请选择业务类型">
                 <el-option label="代理记账" value="代理记账"></el-option>
                 <el-option label="企业注册" value="企业注册"></el-option>
               </el-select>
@@ -49,6 +54,22 @@
             <el-form-item label="主营项目:" prop="main">
               <el-input v-model="ruleForm.main" placeholder="请输入主营项目"></el-input>
             </el-form-item>
+            <el-form-item label="客户经理:" prop="manager1">
+              <el-input v-model="ruleForm.manager1" placeholder="请输入客户经理工号"></el-input>
+            </el-form-item>
+            <el-form-item label="权证经理:" prop="manager2">
+              <el-input v-model="ruleForm.manager2" placeholder="请输入权证经理工号"></el-input>
+            </el-form-item>
+            <el-form-item label="审核经理:" prop="manager3">
+              <el-input v-model="ruleForm.manager3" placeholder="请输入审核经理工号"></el-input>
+            </el-form-item>
+            <el-form-item label="审核状态:" prop="status">
+              <el-select style="width:100%" v-model="ruleForm.status" placeholder="请选择审核状态">
+                <el-option label="待审核" value="待审核"></el-option>
+                <el-option label="驳回" value="驳回"></el-option>
+                <el-option label="通过" value="通过"></el-option>
+              </el-select>
+            </el-form-item>
           </div>
         </el-form>
         <div class="title mt20 mb20">备注信息</div>
@@ -56,7 +77,7 @@
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="uploadBtn('ruleForm')">确 定</el-button>
+        <el-button type="primary" v-if="meth[0] || meth[2]" @click="uploadBtn('ruleForm')">确 定</el-button>
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
@@ -76,6 +97,7 @@
             size="small"
           >编辑</el-button>
           <el-button
+            v-if="meth[1]"
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -90,8 +112,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100,200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
@@ -111,7 +133,7 @@ export default {
         initialFrameHeight: 220
       },
       ueId: 'editor7',
-      selectInput:'',
+      selectInput: '',
       dialogVisible: false,
       isAdd: true,
       select: '',
@@ -128,7 +150,12 @@ export default {
         main: '', //主营项目
         scope: '', //经营范围
         accout: '', //天府通账号
-        remarks: '' //备注
+        manager1: '', //客户经理
+        manager2: '', //权证经理
+        manager3: '', //审核经理
+        status: '待审核', //审核状态
+        remarks: '', //备注
+        time: ''
       },
       cloneRuleForm: {}, //用于备份
       rules: {
@@ -141,6 +168,12 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入负责人电话', trigger: 'blur' }
+        ],
+        manager1: [
+          { required: true, message: '请输入客户经理工号', trigger: 'blur' }
+        ],
+        manager2: [
+          { required: true, message: '请输入权证经理工号', trigger: 'blur' }
         ]
       },
       tableData: [],
@@ -150,7 +183,11 @@ export default {
         { name: '负责人姓名', prop: 'name' },
         { name: '负责人电话', prop: 'phone' },
         { name: '法人', prop: 'gener' },
-        { name: '主营项目', prop: 'main' }
+        { name: '客户经理', prop: 'manager1' },
+        { name: '权证经理', prop: 'manager2' },
+        { name: '审核经理', prop: 'manager3' },
+        { name: '续费日期', prop: 'rentime' },
+        { name: '创建时间', prop: 'time' }
       ],
       find: {
         currentPage: 1, //当前页码
@@ -161,6 +198,7 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
     this.cloneRuleForm = JSON.parse(JSON.stringify(this.ruleForm))
     this.getNewsList()
   },
@@ -178,7 +216,7 @@ export default {
       this.find.currentPage = val
       this.getNewsList()
     },
-    async findClass(){
+    async findClass() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
@@ -189,7 +227,7 @@ export default {
         this.tableData = res.data[0].data
         this.find.total = res.data[0].total[0].total
       })
-      this.input = ""
+      this.input = ''
     },
     async getNewsList() {
       var data = {
@@ -202,7 +240,7 @@ export default {
         this.tableData = res.data[0].data
         this.find.total = res.data[0].total[0].total
       })
-      this.selectInput = ""
+      this.selectInput = ''
     },
     //编辑按钮
     editRow(index, row) {
