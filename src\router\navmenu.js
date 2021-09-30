@@ -10,7 +10,6 @@ export async function getNavMenus(userInfo,router) {
         })
         .then(rel => {
           if (rel.code == 200 && rel.data.roleList.length>0) {
-            console.log(rel)
             var roleList = rel.data.roleList
             //判断当前角色有哪些权限，并重组导航菜单
             for (let i = 0; i < roleList.length; i++) {
@@ -48,7 +47,7 @@ export async function getNavMenus(userInfo,router) {
             // router.go(0)
             router.options.router = []
             var arr = [{
-              path: '/',
+              path: '/', 
               name:'登录',
               component: () => import("@/views/Login"),
             }]
@@ -56,6 +55,7 @@ export async function getNavMenus(userInfo,router) {
             sessionStorage.setItem('oldNavMenu', JSON.stringify(NavList))
             router.options.routes = arr.concat(NavList)
             router.addRoutes(NavList)
+            console.log(NavList)
           }else{
             Message.error({
               message: '暂无权限'
