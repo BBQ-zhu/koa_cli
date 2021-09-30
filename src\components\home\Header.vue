@@ -3,6 +3,9 @@
     <i v-if="isCollapse" class="el-icon-s-unfold f20 color0 pointer" @click="checkCollapse"></i>
     <i v-else class="el-icon-s-fold f20 color0 pointer" @click="checkCollapse"></i>
     <div class="header_right">
+      <div class="badge_item" style="line-height:60px;"><a href="#" class="f16">商城系统</a></div>
+      <div class="badge_item" style="line-height:60px;"><a href="#" class="f16">客服系统</a></div>
+      <!-- 全屏 -->
       <i class="el-icon-full-screen badge_item pointer" @click="fullScree"></i>
       <!-- 警铃 -->
       <el-badge :value="100" :max="10" class="badge_item pointer">
@@ -108,7 +111,7 @@ export default {
     }
   },
   created() {
-    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || {})
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
   },
   methods: {
     fullScree() {
@@ -130,8 +133,15 @@ export default {
           break
       }
     },
-    logout() {
-      sessionStorage.clear()
+    async logout() {
+      // sessionStorage.clear()
+      // this.$logsImg.createlogsImg(this.$api.uploadContractImg,this.ruleForm.imgurl) //添加操作日志
+      let data = {
+        user: `${this.userInfo.username}(${this.userInfo.uid})`,
+        logdata: '',
+        remarks: '退出登录'
+      }
+      await this.$axios.post(this.$api.createlogs, data) //创建日志
       this.$router.push('/')
     },
     //重置密码提交按钮
