@@ -1,7 +1,7 @@
 <template>
   <div>
     <vue-particles class="newCanvs" hoverMode="grab" shapeType="circle" clickMode="push"></vue-particles>
-    <div class="">
+    <div class>
       <div class="formDiv">
         <div class="title color1">平台管理系统</div>
         <div>
@@ -9,7 +9,7 @@
             <span class="compants color2">众创空间</span>
           </div>
         </div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex" >
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm formFlex">
           <el-form-item label prop="uid" class="mt30" style="margin-left:25px">
             <el-input v-model="ruleForm.uid" placeholder="请输入账号"></el-input>
           </el-form-item>
@@ -18,7 +18,10 @@
           </el-form-item>
           <el-button @click="submitForm('ruleForm')" class="subBtn">登录</el-button>
         </el-form>
-        <div class="footer color2 f12 mt20">版权所有 @铸力金融服务外包有限公司<br>蜀ICP备19004658号</div>
+        <div class="footer color2 f12 mt20">
+          版权所有 @铸力金融服务外包有限公司
+          <br />蜀ICP备19004658号
+        </div>
       </div>
     </div>
   </div>
@@ -41,33 +44,53 @@ export default {
   mouted() {},
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      let _this = this
+      _this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios
-            .post(this.$api.loginUser, this.ruleForm)
+          sessionStorage.setItem(
+            'userInfo',
+            JSON.stringify({ uid: _this.ruleForm.uid })
+          )
+          _this.$axios
+            .post(_this.$api.loginuser, _this.ruleForm)
             .then(async res => {
+              console.log(res)
               if (res.code === 200) {
                 //获取并存到本地中
                 sessionStorage.clear()
-                this.$store.commit('storageUserInfo', res.data)
-                await this.$store.dispatch('getNav', this.$router)
-                this.$router.push('/Home')
+                await _this.$store.commit('storageUserInfo', res.data)
+                await _this.$store.dispatch('getNav', _this.$router)
+                await _this.setUserPer(res.data)
+                _this.$router.push('/Home')
               }
             })
         } else {
           return false
         }
       })
+    },
+    //将当前角色的权限保存起来,供main.js中混入使用
+    setUserPer(user) {
+      this.$axios
+        .post(this.$api.findOneRole, { rolename: user.role })
+        .then(async res => {
+          if (res.code === 200) {
+            sessionStorage.setItem(
+            'userPermission',
+            JSON.stringify(res.data)
+          )
+          }
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-.newCanvs{
+.newCanvs {
   width: 100%;
   height: calc(100vh);
-  background:#2b3a4a;
+  background: #2b3a4a;
 }
 .formDiv {
   width: 350px;
@@ -76,9 +99,9 @@ export default {
   border-radius: 5px;
   background: white;
   opacity: 0.8;
-  position:fixed;
-  top:calc(50vh - 190px);
-  left:calc(50% - 210px)
+  position: fixed;
+  top: calc(50vh - 190px);
+  left: calc(50% - 210px);
 }
 ::v-deep .el-form-item__label {
   font-size: 16px;
@@ -112,8 +135,8 @@ export default {
   font-size: 18px;
   font-weight: 600;
   margin-top: 20px;
-  background:#2b3a4a;
-  color:#fff;
+  background: #2b3a4a;
+  color: #fff;
   border-radius: 8px;
 }
 .footer {
