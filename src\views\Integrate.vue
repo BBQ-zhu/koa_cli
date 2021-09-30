@@ -1,13 +1,13 @@
 <template>
   <div class="card">
     <div class="header flex">
-      <el-button type="primary" icon="el-icon-upload" @click="upload">上传咨询客户</el-button>
+      <el-button type="primary" v-if="meth[0]" icon="el-icon-upload" @click="upload">上传咨询客户</el-button>
       <el-select class="ml20" style="width:202px;" v-model="selectInput" placeholder="请选择" @change="classType = 'type',findClass()">
         <el-option
           v-for="item in productClass"
-          :key="item.type"
-          :label="item.type"
-          :value="item.type">
+          :key="item._id"
+          :label="item.name"
+          :value="item.name">
         </el-option>
       </el-select>
       <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
@@ -36,9 +36,9 @@
               <el-select class="" v-model="ruleForm.type" placeholder="请选择">
                 <el-option
                   v-for="item in productClass"
-                  :key="item.type"
-                  :label="item.type"
-                  :value="item.type">
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -58,7 +58,7 @@
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="uploadBtn('ruleForm')">确 定</el-button>
+        <el-button type="primary" v-if="meth[0] || meth[2]" @click="uploadBtn('ruleForm')">确 定</el-button>
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
@@ -78,6 +78,7 @@
             size="small"
           >编辑</el-button>
           <el-button
+            v-if="meth[1]"
             @click.native.prevent="deleteRow(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -92,8 +93,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100,200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
@@ -112,7 +113,7 @@ export default {
         initialFrameWidth: null,
         initialFrameHeight: 220
       },
-      ueId: 'editor7',
+      ueId: 'editor3',
       selectInput:'',
       dialogVisible: false,
       isAdd: true,
@@ -137,7 +138,7 @@ export default {
       tableData: [],
       tableHeader: [
         { name: '咨询人姓名', prop: 'proname' },
-        { name: '咨询人姓名', prop: 'name' },
+        { name: '咨询类型', prop: 'type' },
         { name: '咨询人电话', prop: 'phone' },
         { name: '咨询时间', prop: 'time' }
       ],
@@ -150,6 +151,12 @@ export default {
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
+
+    if(this.$route.query.phone){
+      this.select = 'phone'
+      this.input = this.$route.query.phone
+    }
     this.cloneRuleForm = JSON.parse(JSON.stringify(this.ruleForm))
     this.findProductClass()
     this.getNewsList()
@@ -158,7 +165,8 @@ export default {
     async findProductClass(){
       await this.$axios.post(this.$api.findProductClass).then(res => {
         if(res.code == 200){
-          this.productClass = res.data
+          let arr = [{_id:'1',name:'专业顾问'},{_id:'2',name:'加入我们'},{_id:'3',name:'推荐客户'},{_id:'4',name:'商务合作'}]
+          this.productClass = res.data.concat(arr)
         }
       })
     },
