@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="flex header">
-      <el-button type="primary" icon="el-icon-plus" @click="addUser()">新增员工</el-button>
+      <el-button v-if="meth[0]" type="primary" icon="el-icon-plus" @click="addUser()">新增员工</el-button>
       <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
         <el-select v-model="select" slot="prepend" placeholder="请选择">
           <el-option
@@ -14,128 +14,171 @@
         <el-button slot="append" icon="el-icon-search" @click="findFuzz()"></el-button>
       </el-input>
     </div>
-      <el-table :data="tableData" stripe >
-        <el-table-column label="头像" min-width="100px">
-          <template slot-scope="scope">
-            <el-tooltip placement="right">
-              <div slot="content">
-                <img :src="scope.row.imgurl" />
-              </div>
-              <img :src="scope.row.imgurl" class="tableImg" />
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-for="(item,index) in tableHeader"
-          :key="index+'1'"
-          :prop="item.prop"
-          :label="item.name"
-          min-width="100px"
-        ></el-table-column>
-        <el-table-column label="操作" min-width="100px">
-          <template slot-scope="scope">
-            <el-button
-              @click.native.prevent="editRow(scope.$index, scope.row)"
-              type="text"
-              size="small"
-            >编辑</el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, scope.row)"
-              type="text"
-              size="small"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <el-table :data="tableData" stripe>
+      <el-table-column label="头像" min-width="100px">
+        <template slot-scope="scope">
+          <el-tooltip placement="right">
+            <div slot="content">
+              <img :src="scope.row.imgurl" />
+            </div>
+            <img :src="scope.row.imgurl" class="tableImg" />
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-for="(item,index) in tableHeader"
+        :key="index+'1'"
+        :prop="item.prop"
+        :label="item.name"
+        min-width="100px"
+      ></el-table-column>
+      <el-table-column label="操作" min-width="100px">
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="editRow(scope.$index, scope.row)"
+            type="text"
+            size="small"
+          >编辑</el-button>
+          <el-button
+            v-if="meth[1]"
+            @click.native.prevent="deleteRow(scope.$index, scope.row)"
+            type="text"
+            size="small"
+          >删除</el-button>
+          <el-button
+            v-if="meth[2]"
+            @click.native.prevent="newPwd(scope.$index, scope.row)"
+            type="text"
+            size="small"
+          >重置密码</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <!-- 页码条 -->
     <el-pagination
       class="mt20"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[find.limit, 20, 50, 100,200]"
-      :page-size="find.limit"
+      :page-sizes="[10, 20, 50, 100,200]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
     ></el-pagination>
 
-    <!-- 弹出框 -->
-    <el-dialog title="员工信息" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+    <!-- 弹出框 :visible.sync="dialogVisible" -->
+    <el-dialog title="员工信息" :visible="dialogVisible" width="90%" :before-close="handleClose">
       <span>
         <el-form
           :model="ruleForm"
           :rules="rules"
           ref="ruleForm"
           label-width="100px"
-          class="demo-ruleForm flex"
+          class="demo-ruleForm"
         >
-          <el-form-item label="姓名:" prop="username">
-            <el-input v-model="ruleForm.username" placeholder="请输入员工姓名" class="inputWidth"></el-input>
-          </el-form-item>
-          <el-form-item label="角色:" prop="role">
-            <el-select v-model="ruleForm.role" placeholder="请选择员工角色">
-              <el-option
-                v-for="item in roleLists"
-                :key="item._id"
-                :label="item.rolename"
-                :value="item.rolename"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="团队:" prop="team">
-            <el-select v-model="ruleForm.team" placeholder="请选择员工团队">
-              <el-option
-                v-for="item in teamList"
-                :key="item._id"
-                :label="item.teamname"
-                :value="item.teamname"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="电话:" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入员工电话" class="inputWidth"></el-input>
-          </el-form-item>
-          <el-form-item label="照片:" prop="imgurl">
-            <el-upload
-              class="upload-demo"
-              :action="this.$api.userImgUrl"
-              :headers="uploadHeader"
-              :on-remove="handleRemove"
-              :on-success="handSuccess"
-              :file-list="fileList"
-              :limit="imgLimit"
-            >
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传一张图片，重新上传前请先删除原图片</div>
-            </el-upload>
-          </el-form-item>
+          <div class="flex">
+            <el-form-item label="姓名:" prop="username">
+              <el-input v-model="ruleForm.username" placeholder="请输入员工姓名" class="inputWidth"></el-input>
+            </el-form-item>
+            <el-form-item label="角色:" prop="role">
+              <el-select style="width:100%" v-model="ruleForm.role" placeholder="请选择员工角色">
+                <el-option
+                  v-for="item in roleLists"
+                  :key="item._id"
+                  :label="item.rolename"
+                  :value="item.rolename"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="电话:" prop="phone">
+              <el-input v-model="ruleForm.phone" placeholder="请输入员工电话" class="inputWidth"></el-input>
+            </el-form-item>
+            <el-form-item label="团队:" prop="team">
+              <el-select style="width:100%" v-model="ruleForm.team" placeholder="请选择员工团队">
+                <el-option
+                  v-for="item in teamList"
+                  :key="item._id"
+                  :label="item.teamname"
+                  :value="item.teamname"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="身份证:" prop="idcard">
+              <el-input v-model="ruleForm.idcard" placeholder="请输入员工身份证" class="inputWidth"></el-input>
+            </el-form-item>
+            <el-form-item label="住址:" prop="address">
+              <el-input v-model="ruleForm.address" placeholder="请输入员工住址" class="inputWidth"></el-input>
+            </el-form-item>
+            <el-form-item label="咨询顾问:" prop="isrecomed">
+              <el-select style="width:100%" v-model="ruleForm.isrecomed" placeholder="是否为咨询顾问">
+                <el-option label="是" value="是"></el-option>
+                <el-option label="否" value="否"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="咨询师介绍:" prop="intro">
+              <el-input v-model="ruleForm.intro" placeholder="请输入咨询师介绍" class="inputWidth"></el-input>
+            </el-form-item>
+
+            <el-form-item label="员工头像:" prop="imgurl">
+              <div style="position: relative">
+                <el-input placeholder="请上传员工头像" v-model="ruleForm.imgurl" disabled></el-input>
+                <el-upload
+                  v-if="meth[0] || meth[2]"
+                  style="position: absolute; top: 0; right: -110px"
+                  class="upload-demo"
+                  :data="ruleForm"
+                  :action="this.$api.uploadUserImg"
+                  :headers="uploadHeader"
+                  :on-error="onError"
+                  :on-success="handSuccess"
+                  :show-file-list="false"
+                >
+                  <el-button type="primary" >点击上传</el-button>
+                </el-upload>
+              </div>
+            </el-form-item>
+          </div>
         </el-form>
+        <UE :defaultMsg="ruleForm.remarks" :config="config" :id="ueId" ref="editor"></UE>
       </span>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" v-if="meth[0] || meth[2]" @click="submitForm('ruleForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import UE from '@/components/common/UE'
 export default {
+  components: {
+    UE
+  },
   data() {
     return {
       uploadHeader: {
-        authorization: JSON.parse(sessionStorage.getItem('userInfo') || {}).token
+        authorization: JSON.parse(sessionStorage.getItem('userInfo') || '{}')
+          .token
       },
-      fileList: [],
-      imgLimit: 1, //最多上传一张
+      config: {
+        initialFrameWidth: null,
+        initialFrameHeight: 220
+      },
+      ueId: 'editor4', //多实例情况下使用
       isAdd: true,
+      fileList: [],
       tableData: [],
       tableHeader: [
         { name: '工号', prop: 'uid' },
         { name: '姓名', prop: 'username' },
         { name: '团队', prop: 'team' },
         { name: '角色', prop: 'role' },
-        { name: '电话', prop: 'phone' }
+        { name: '电话', prop: 'phone' },
+        { name: '身份证', prop: 'idcard' },
+        { name: '住址', prop: 'address' },
+        { name: '咨询师', prop: 'isrecomed' }
       ],
       roleLists: [],
       input: '',
@@ -147,24 +190,32 @@ export default {
         limit: 10 //每一页的数量
       },
       dialogVisible: false,
-      teamList:[],
+      teamList: [],
       ruleForm: {
         imgurl: '',
         uid: '',
-        team:'',
+        team: '',
         username: '',
         role: '',
-        phone: ''
+        phone: '',
+        idcard: '', //身份证
+        address: '', //家庭住址
+        isrecomed: '', //是否推荐至咨询顾问
+        intro: '', //顾问介绍
+        remarks: '',
+        time: ''
       },
       rules: {
         username: [
           { required: true, message: '请输入员工姓名', trigger: 'blur' }
         ],
         role: [{ required: true, message: '请选择员工角色', trigger: 'blur' }],
+        phone: [{ required: true, message: '请输入员工电话', trigger: 'blur' }]
       }
     }
   },
   mounted() {
+    this.mixinMethod(this.$route.path)
     this.getUserList()
     this.findRoleList()
     this.findteam()
@@ -172,7 +223,7 @@ export default {
   methods: {
     findteam() {
       //查询团队
-      this.$axios.get(this.$api.findTeam).then(res => {
+      this.$axios.post(this.$api.findTeam).then(res => {
         if (res.code == 200) {
           this.teamList = res.data
         }
@@ -210,18 +261,45 @@ export default {
         this.find.total = res.data[0].total ? res.data[0].total[0].total : 0
       })
     },
+    newPwd(index, row) {
+      let _this = this
+      _this.$confirm('此操作将重置密码为:123456, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          var data = {
+            uid:row.uid,
+            newPassword:'123456'
+          }
+          await _this.$axios
+            .post(_this.$api.resetPassword, data)
+            .then(res => {
+              _this.$message({
+                type: 'success',
+                message: '重置成功!'
+              })
+            })
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消'
+          // })
+        })
+    },
     //编辑行
     editRow(index, row) {
       this.dialogVisible = true
       this.isAdd = false
       this.ruleForm = row
-      console.log(this.ruleForm)
-      if (this.ruleForm.imgurl) {
-        this.fileList = []
-        this.fileList.push({ name: '头像', url: this.ruleForm.imgurl })
-      } else {
-        this.fileList = []
-      }
+      // if (this.ruleForm.imgurl) {
+      //   this.fileList = []
+      //   this.fileList.push({ name: '头像', url: this.ruleForm.imgurl })
+      // } else {
+      //   this.fileList = []
+      // }
     },
     //删除行
     deleteRow(index, row) {
@@ -232,7 +310,6 @@ export default {
       })
         .then(async () => {
           this.ruleForm = row
-          console.log(this.ruleForm)
           if (this.ruleForm.imgurl) {
             let delateImg = await this.delateImgAll()
             if (delateImg.code == 200) {
@@ -247,13 +324,15 @@ export default {
                 })
             }
           } else {
-            await this.$axios.post(this.$api.deleteUser, { uid: row.uid }).then(res => {
-              this.getUserList()
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
+            await this.$axios
+              .post(this.$api.deleteUser, { uid: row.uid })
+              .then(res => {
+                this.getUserList()
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
               })
-            })
           }
         })
         .catch(() => {
@@ -267,60 +346,43 @@ export default {
       this.fileList = []
       this.dialogVisible = true
       this.isAdd = true
+      this.ruleForm = {
+        imgurl: '',
+        uid: '',
+        team: '',
+        username: '',
+        role: '',
+        phone: '',
+        idcard: '', //身份证
+        address: '', //家庭住址
+        isrecomed: '', //是否推荐至咨询顾问
+        intro: '', //顾问介绍
+        remarks: '',
+        time: ''
+      }
     },
     //提交信息
     submitForm(formName) {
-      this.$refs[formName].validate(async valid => {
+      let _this = this
+      _this.$refs[formName].validate(async valid => {
         if (valid) {
-          console.log(this.fileList)
-          if (this.isAdd) {
+          _this.ruleForm.remarks = _this.$refs.editor.getUEContent()
+          if (_this.isAdd) {
             //新增
-            if (this.fileList.length) {
-              //有图片的情况就先上传图片
-              let uploadImg = await this.$axios.post(this.$api.uploadImg, {
-                name: this.fileList[0].name,
-                path: this.fileList[0].url
-              })
-              if (uploadImg.code == 200) {
-                this.ruleForm.imgurl = uploadImg.data
-                this.createNewUser()
-              }
-            } else {
-              this.createNewUser()
-            }
+            delete _this.ruleForm._id
+            _this.createNewUser()
+            _this.dialogVisible = false
           } else {
-            //更新
-            if (this.fileList.length && this.ruleForm.imgurl) {
-              let delateImg = await this.delateImgAll()
-              if (delateImg.code == 200) {
-                let uploadImg = await this.$axios.post(this.$api.uploadImg, {
-                  name: this.fileList[0].name,
-                  path: this.fileList[0].url
-                })
-                if (uploadImg.code == 200) {
-                  this.ruleForm.imgurl = uploadImg.data
-                }
-              }
-            } else if (!this.fileList.length && this.ruleForm.imgurl) {
-              let delateImg = await this.delateImgAll()
-              if (delateImg.code == 200) {
-                this.ruleForm.imgurl = ''
-              }
-            } else if (this.fileList.length && !this.ruleForm.imgurl) {
-              let uploadImg = await this.$axios.post(this.$api.uploadImg, {
-                name: this.fileList[0].name,
-                path: this.fileList[0].url
-              })
-              if (uploadImg.code == 200) {
-                this.ruleForm.imgurl = uploadImg.data
-              }
+            var res = await _this.$axios.post(
+              _this.$api.updateUser,
+              _this.ruleForm
+            )
+            if (res.code == 200) {
+              _this.$message.success('操作成功')
+              _this.dialogVisible = false
+              _this.getUserList()
             }
-            this.$axios.post(this.$api.updateUser, this.ruleForm).then(res => {
-              this.$message.success('修改成功')
-            })
           }
-          this.getUserList()
-          this.dialogVisible = false
         }
       })
     },
@@ -329,20 +391,35 @@ export default {
       var url = this.ruleForm.imgurl
       var index = url.lastIndexOf('/')
       var fileName = url.slice(index + 1)
-      return this.$axios.post(this.$api.delateImg, {
+      return this.$axios.post(this.$api.delateUserImg, {
         fileName
       })
     },
-    //删除图片钩子（假删除）
-    handleRemove(file, fileList) {
-      this.fileList = []
+    onError(err, file, fileList) {
+      this.$message.error('文件上传失败')
     },
     //上传图片成功钩子
-    handSuccess(res, file, fileList) {
+    async handSuccess(res, file, fileList) {
       if (res.code == 200) {
+        if (!this.isAdd) {
+          await this.$axios.post(this.$api.updateUser, {
+            uid: this.ruleForm.uid,
+            imgurl: res.data
+          })
+        }
+        if (this.ruleForm.imgurl) {
+          var url = this.ruleForm.imgurl
+          var index = url.lastIndexOf('/')
+          var fileName = url.slice(index + 1)
+          await this.$axios.post(this.$api.delateUserImg, { fileName })
+        }
+        this.ruleForm.imgurl = res.data
         this.fileList = []
-        this.fileList.push({ name: file.name, url: res.data })
-        console.log(res, file, fileList)
+        this.$logsImg.createlogsImg(
+          this.$api.uploadUserImg,
+          this.ruleForm.imgurl
+        ) //添加操作日志
+        this.$message.success('文件上传成功')
       }
     },
     async createNewUser() {
@@ -356,7 +433,7 @@ export default {
     },
     //取消修改
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      // this.$refs[formName].resetFields()
       this.dialogVisible = false
     },
     handleSizeChange(val) {
