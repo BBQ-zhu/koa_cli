@@ -5,20 +5,20 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userInfo: {},
+    userInfo: {}, 
     oldNavMenu: [],
     newNavMenu: []
-  },
+  }, 
   mutations: {
     storageUserInfo(state, e) {
       e.token = "Bearer " + e.token
       sessionStorage.setItem('userInfo', JSON.stringify(e))
-      state.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+      state.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
     }
   },
   actions: {
     async getNav(contxt,router){
-      let userInfo = JSON.parse(sessionStorage.getItem('userInfo')||{})
+      let userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
       await getNavMenus(userInfo,router)
     }
   },
