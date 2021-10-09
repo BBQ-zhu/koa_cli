@@ -12,6 +12,7 @@ src\views\ScroImage.vue
 后端：
 controller\index.js
 config\password.js    新增文件
+npm install crypto --save 安装插件
 
 config\index.js  增加：port:3030
 bin\www  10到16条
