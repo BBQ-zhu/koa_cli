@@ -2,24 +2,34 @@
   <div class="card">
     <div class="header flex">
       <el-button type="primary" v-if="meth[0]" icon="el-icon-upload" @click="upload">上传咨询客户</el-button>
-      <el-select class="ml20" style="width:202px;" v-model="selectInput" placeholder="请选择" @change="classType = 'type',findClass()">
+      <el-select
+        class="ml20"
+        style="width: 202px"
+        v-model="selectInput"
+        placeholder="请选择"
+        @change="(classType = 'type'), findClass()"
+      >
         <el-option
           v-for="item in productClass"
           :key="item._id"
           :label="item.name"
-          :value="item.name">
-        </el-option>
+          :value="item.name"
+        ></el-option>
       </el-select>
       <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
-        <el-select v-model="select" slot="prepend" placeholder="请选择" style="width:130px">
+        <el-select v-model="select" slot="prepend" placeholder="请选择" style="width: 130px">
           <el-option
-            v-for="(item,index) in tableHeader"
-            :key="index+'h'"
+            v-for="(item, index) in tableHeader"
+            :key="index + 'h'"
             :label="item.name"
             :value="item.prop"
           ></el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search" @click="getNewsList()"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="(find.currentPage = 1), getNewsList()"
+        ></el-button>
       </el-input>
     </div>
     <div v-if="dialogVisible" class="window">
@@ -31,15 +41,15 @@
           label-width="120px"
           class="demo-ruleForm"
         >
-          <div class="">
+          <div class>
             <el-form-item label="业务类别:" prop="type">
-              <el-select class="" v-model="ruleForm.type" placeholder="请选择">
+              <el-select class v-model="ruleForm.type" placeholder="请选择">
                 <el-option
                   v-for="item in productClass"
                   :key="item._id"
                   :label="item.name"
-                  :value="item.name">
-                </el-option>
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称:" prop="proname">
@@ -63,7 +73,7 @@
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
       <el-table-column
-        v-for="(item,index) in tableHeader"
+        v-for="(item, index) in tableHeader"
         :key="index"
         :prop="item.prop"
         :label="item.name"
@@ -93,7 +103,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[10, 20, 50, 100,200]"
+      :page-sizes="[10, 20, 50, 100, 200]"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
@@ -114,27 +124,33 @@ export default {
         initialFrameHeight: 220
       },
       ueId: 'editor3',
-      selectInput:'',
+      selectInput: '',
       dialogVisible: false,
       isAdd: true,
       select: '',
       input: '',
       ruleForm: {
         type: '', //分类
-        proname:'', //产品名称
+        proname: '', //产品名称
         name: '', //姓名
         phone: '', //电话
         remarks: '', //备注
-        time:''
+        time: ''
       },
       cloneRuleForm: {}, //用于备份
       rules: {
         type: [{ required: true, message: '请选择业务类别', trigger: 'blur' }],
-        proname: [{ required: true, message: '请输入产品名字', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入咨询人姓名', trigger: 'blur' }],
-        phone: [{ required: true, message: '请输入咨询人电话', trigger: 'blur' }]
+        proname: [
+          { required: true, message: '请输入产品名字', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请输入咨询人姓名', trigger: 'blur' }
+        ],
+        phone: [
+          { required: true, message: '请输入咨询人电话', trigger: 'blur' }
+        ]
       },
-      productClass:[],
+      productClass: [],
       tableData: [],
       tableHeader: [
         { name: '咨询人姓名', prop: 'proname' },
@@ -152,8 +168,7 @@ export default {
   },
   mounted() {
     this.mixinMethod(this.$route.path)
-
-    if(this.$route.query.phone){
+    if (this.$route.query.phone) {
       this.select = 'phone'
       this.input = this.$route.query.phone
     }
@@ -162,10 +177,15 @@ export default {
     this.getNewsList()
   },
   methods: {
-    async findProductClass(){
+    async findProductClass() {
       await this.$axios.post(this.$api.findProductClass).then(res => {
-        if(res.code == 200){
-          let arr = [{_id:'1',name:'专业顾问'},{_id:'2',name:'加入我们'},{_id:'3',name:'推荐客户'},{_id:'4',name:'商务合作'}]
+        if (res.code == 200) {
+          let arr = [
+            { _id: '1', name: '专业顾问' },
+            { _id: '2', name: '加入我们' },
+            { _id: '3', name: '推荐客户' },
+            { _id: '4', name: '商务合作' }
+          ]
           this.productClass = res.data.concat(arr)
         }
       })
@@ -183,7 +203,7 @@ export default {
       this.find.currentPage = val
       this.getNewsList()
     },
-    async findClass(){
+    async findClass() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
@@ -194,7 +214,7 @@ export default {
         this.tableData = res.data[0].data
         this.find.total = res.data[0].total[0].total
       })
-      this.input = ""
+      this.input = ''
     },
     async getNewsList() {
       var data = {
@@ -207,7 +227,7 @@ export default {
         this.tableData = res.data[0].data
         this.find.total = res.data[0].total[0].total
       })
-      this.selectInput = ""
+      this.selectInput = ''
     },
     //编辑按钮
     editRow(index, row) {
@@ -269,7 +289,7 @@ export default {
 
 <style scoped>
 .window {
-  width: 100%; 
+  width: 100%;
   height: auto;
   /* background:red; */
   box-sizing: border-box;
