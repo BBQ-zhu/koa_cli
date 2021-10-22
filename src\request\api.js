@@ -44,6 +44,10 @@ module.exports = {
             msg: '前端管理-新闻管理'
         },
         {
+            name: 'Internal',
+            msg: '前端管理-内部资料'
+        },
+        {
             name: 'Vipuser',
             msg: '权限管理-客户管理'
         },
@@ -90,7 +94,7 @@ module.exports = {
             name: 'loginuser',
             msg: '登录'
         },
-         {
+        {
             name: 'Password',
             msg: '密码'
         },
@@ -99,6 +103,11 @@ module.exports = {
             msg: '-图片'
         }
     ],
+    //内部资料
+    createInternal:'internal/createInternal',
+    findInternal:'internal/findInternal',
+    updateInternal:'internal/updateInternal',
+    deleteInternal:'internal/deleteInternal',
     //代办中心
     createAgent: 'agents/createAgent',
     deleteAgent: 'agents/deleteAgent',
