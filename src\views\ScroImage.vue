@@ -20,8 +20,8 @@
         <div
           v-for="(children, indec) in item.imgList"
           :key="indec + 'img'"
-          class="ml10 mt10 "
-          style="position: relative;"
+          class="ml10 mt10"
+          style="position: relative"
         >
           <img :src="children.scroimg" class="scroImg" />
           <i
@@ -102,12 +102,12 @@ export default {
       scrollImgData: "",
       scrolLists: [
         {
-          type: "移动端-首页",
+          type: "移动端-首页轮播",
           typeId: "mobScroll",
           imgList: [],
         },
         {
-          type: "移动端-分类",
+          type: "移动端-分类导航",
           typeId: "mobClass",
           imgList: [],
         },
@@ -142,13 +142,16 @@ export default {
           imgList: [],
         },
         {
-          type: "PC端-首页",
+          type: "电脑端-顶部Logo(左右各一张,等宽)",
+          typeId: "logo",
+          imgList: [],
+        },{
+          type: "电脑端-首页轮播(长宽比2：1)",
           typeId: "pcScroll",
           imgList: [],
-        },
-        {
-          type: "PC端-推荐",
-          typeId: "pcPicks",
+        },{
+          type: "电脑端-底部二维码(传1张)",
+          typeId: "erweima",
           imgList: [],
         },
       ],
@@ -170,7 +173,6 @@ export default {
   mounted() {
     this.mixinMethod(this.$route.path);
     console.log(this.meth);
-
     this.findScrollImg();
   },
   methods: {
