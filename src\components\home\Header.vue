@@ -10,7 +10,7 @@
       v-else
       class="el-icon-s-fold f20 color0 pointer"
       @click="checkCollapse"
-    ></i>
+    ></i> 
     <div class="header_right">
       <div class="badge_item" style="line-height: 60px">
         <a href="#" class="f16">商城管理系统</a>
@@ -21,8 +21,8 @@
       <!-- 全屏 -->
       <i class="el-icon-full-screen badge_item pointer" @click="fullScree"></i>
       <!-- 警铃 -->
-      <el-badge :value="100" :max="10" class="badge_item pointer">
-        <i class="el-icon-bell"></i>
+      <el-badge :value="tableData.length" :max="10" class="badge_item pointer">
+        <i class="el-icon-bell" @click="toAgents"></i>
       </el-badge>
       <!-- 头像 -->
       <el-tooltip
@@ -132,6 +132,7 @@ export default {
       }
     };
     return {
+      tableData:0,
       isCollapse: false,
       userInfo: "",
       dialogVisible: false,
@@ -148,16 +149,39 @@ export default {
     };
   },
   created() {
+    this.getAgentsList()
     this.userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
   },
   methods: {
+    toAgents(){
+      this.$router.push("/Agents")
+    },
+    //获取数据
+    async getAgentsList() {
+      var data = {
+        skip: 0,
+        limit: 999,
+        fuzz: "handler",
+        input: JSON.parse(sessionStorage.getItem("userInfo") || "{}").uid,
+      };
+      await this.$axios.post(this.$api.findAgent, data).then((res) => {
+        if (res.code == 200) {
+          let arr = res.data[0].data
+          arr.map(item => {
+            if (item.read == 'false') {
+              this.tableData.push(item)
+            }
+          })
+        }
+      });
+    },
     fullScree() {
       screenfull.toggle();
     },
     checkCollapse() {
       this.isCollapse = !this.isCollapse;
       this.$parent.$refs.aside.checkCollapse();
-      this.$parent.changeWidth()
+      this.$parent.changeWidth();
     },
     handleCommand(command) {
       switch (command) {
