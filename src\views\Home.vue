@@ -3,13 +3,13 @@
     <div>
       <Aside ref="aside" />
     </div>
-    <div class="main" :style="{width:'calc(100% - ' + mainWidth + ')'}">
+    <div class="main" :style="{ width: 'calc(100% - ' + mainWidth + ')' }">
       <Header ref="header" />
       <div class="box">
         <transition name="slide-right" mode="out-in">
-          <keep-alive>
+          <!-- <keep-alive> -->
             <router-view class="child-view"></router-view>
-          </keep-alive>
+          <!-- </keep-alive> -->
         </transition>
       </div>
     </div>
@@ -26,19 +26,17 @@ export default {
   },
   data() {
     return {
-      isCollapseWith:false,
-      mainWidth:'200px'
+      isCollapseWith: false,
+      mainWidth: "200px",
     };
   },
-  mounted(){
-    
-  },
+  mounted() {},
   methods: {
-    changeWidth(){
-      this.isCollapse = !this.isCollapse
-      this.mainWidth = this.isCollapse ? '64px' : '200px'
-      console.log(this.isCollapse,this.mainWidth)
-    }
+    changeWidth() {
+      this.isCollapse = !this.isCollapse;
+      this.mainWidth = this.isCollapse ? "64px" : "200px";
+      console.log(this.isCollapse, this.mainWidth);
+    },
   },
 };
 </script>
@@ -55,7 +53,6 @@ export default {
 }
 .box {
   height: calc(100vh - 60px);
-
   box-sizing: border-box;
   overflow-y: auto;
   padding: 20px 20px 0 20px;
