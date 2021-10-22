@@ -6,21 +6,25 @@
         class="ml20"
         v-model="selectInput"
         placeholder="请选择"
-        @change="classType = 'type',findClass()"
+        @change="(classType = 'type'), findClass()"
       >
         <el-option lable="代理记账" value="代理记账"></el-option>
         <el-option lable="企业注册" value="企业注册"></el-option>
       </el-select>
       <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
-        <el-select v-model="select" slot="prepend" placeholder="请选择" style="width:130px">
+        <el-select v-model="select" slot="prepend" placeholder="请选择" style="width: 130px">
           <el-option
-            v-for="(item,index) in tableHeader"
-            :key="index+'h'"
+            v-for="(item, index) in tableHeader"
+            :key="index + 'h'"
             :label="item.name"
             :value="item.prop"
           ></el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search" @click="getNewsList()"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="(find.currentPage = 1), getNewsList()"
+        ></el-button>
       </el-input>
     </div>
     <div v-if="dialogVisible" class="window">
@@ -34,7 +38,7 @@
         >
           <div class="flex">
             <el-form-item label="业务类型:" prop="type">
-              <el-select style="width:100%" v-model="ruleForm.type" placeholder="请选择业务类型">
+              <el-select style="width: 100%" v-model="ruleForm.type" placeholder="请选择业务类型">
                 <el-option label="代理记账" value="代理记账"></el-option>
                 <el-option label="企业注册" value="企业注册"></el-option>
               </el-select>
@@ -64,7 +68,7 @@
               <el-input v-model="ruleForm.manager3" placeholder="请输入审核经理工号"></el-input>
             </el-form-item>
             <el-form-item label="审核状态:" prop="status">
-              <el-select style="width:100%" v-model="ruleForm.status" placeholder="请选择审核状态">
+              <el-select style="width: 100%" v-model="ruleForm.status" placeholder="请选择审核状态">
                 <el-option label="待审核" value="待审核"></el-option>
                 <el-option label="驳回" value="驳回"></el-option>
                 <el-option label="通过" value="通过"></el-option>
@@ -82,7 +86,7 @@
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
       <el-table-column
-        v-for="(item,index) in tableHeader"
+        v-for="(item, index) in tableHeader"
         :key="index"
         :prop="item.prop"
         :label="item.name"
@@ -112,7 +116,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="find.currentPage"
-      :page-sizes="[10, 20, 50, 100,200]"
+      :page-sizes="[10, 20, 50, 100, 200]"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="find.total"
@@ -199,6 +203,10 @@ export default {
   },
   mounted() {
     this.mixinMethod(this.$route.path)
+    if (this.$route.query.phone) {
+      this.select = 'phone'
+      this.input = this.$route.query.phone
+    }
     this.cloneRuleForm = JSON.parse(JSON.stringify(this.ruleForm))
     this.getNewsList()
   },
@@ -280,6 +288,17 @@ export default {
               this.$api.createEnterprise,
               this.ruleForm
             )
+            let data = {
+              proid: 'new',
+              type: '提交-企业资料', // 数据来源
+              name: this.ruleForm.name, // 客户名称
+              phone: this.ruleForm.phone, // 电话
+              submitby: this.ruleForm.manager1, // 提交人
+              handler: this.ruleForm.manager2, // 处理人
+              path: '/Enterprise', // 跳转企业资料
+              read: 'false' // 是否已处理
+            }
+            this.$axios.post(this.$api.createAgent, data)
           } else {
             var res = await this.$axios.post(
               this.$api.updateEnterprise,
