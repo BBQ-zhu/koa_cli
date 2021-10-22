@@ -1,27 +1,62 @@
-前端：
-src\main.js
-src\components\home\Header.vue
-src\components\home\Aside.vue
-src\views\Home.vue
-src\request\api.js
-src\views\Contract.vue
-src\views\Operation.vue
-src\views\ScroImage.vue
-查询 slot="append"   加上 find.currentPage=1 ,
+# vue_cli
 
-后端：
-controller\index.js
-config\password.js    新增文件
-npm install crypto --save 安装插件
+## Project setup
+```
+npm install
+```
 
-config\index.js  增加：port:3030
-bin\www  10到16条
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-const config = require('../config')
-/**
- * Get port from environment and store in KOA.
- */
+### Compiles and minifies for production
+```
+npm run build
+```
 
-var port = normalizePort(process.env.PORT || config.port);
-console.log( config.port + '端口号监听成功!')
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
 
+
+教学网址：https://blog.csdn.net/weixin_46182770/article/details/112974311
+
+全局安装koa的脚手架（只需要安装一次）：npm install koa-generator -g
+
+安装脚手架目录koa2 server （server是项目名称）
+
+安装依赖npm install
+
+进入到server文件夹中
+
+启动命令：npm run dev / node bin/www
+
+在bin/www文件中prot中修改端口号
+
+注意：用脚手架搭建的koa2项目的启动方式和普通的node app.js启动方式不同
+
+1、在使用ueditor中注意事项
+
+现在后端安装koa2-ueditor 由于后端使用的是koa-multer解析图片，而我使用的是koa-body，所以会造成冲突问题， 解决办法：分开设置，在main，js中引入koaBody但是不配置允许上传文件，而在对应接口中去设置 //上传员工图片(假上传) router.post('/userImg',KoaBody({multipart: true}),uploads.userImg)
+
+2、在配置ueditor加载本地文件失败的情况
+ ueditor基本教程：https://blog.csdn.net/weixin_46561402/article/details/105899004 
+ ueditor官方文档：http://fex.baidu.com/ueditor/#server-deploy 
+ ueditor下载：https://github.com/sealice/koa2-ueditor/tree/master/example/public 
+ 下载ueditor文件夹后，需要把名称改为UE且把该文件夹放在前端项目public文件目录下，且把该文件中的ueditor.config.js中的 window.UEDITOR_HOME_URL="/UE/" //静态文件访问的重要配置，默认public下的文件夹，还要修改请求接口，注意和后端一致， // 服务器统一请求接口路径 ，api只是前缀 , serverUrl: "/api/editor/controller"
+
+main.js中引入
+
+import '../public/UE/ueditor.config.js' import '../public/UE/ueditor.all.min.js' import '../public/UE/lang/zh-cn/zh-cn.js' import '../pub/('public'))
+
+图片的请求接口记得做代理至后端接口，不然他会使用脚手架本地搭建的服务端口，后端还要做好跨域处理
+
+注意点：
+数据可视化：https://github.com/bym110/vue-echarts
+1、用户点击某个产品得立即办理后，会发送一条代办消息，代办消息默认是all，即所有人可见，如果是贷款资料得提交则会提交给对应的人。
+2、代办中心展示给处理人为all和权证经理
+4、线上和本地切换时，短信登录处需要修改
+5、线上和本地切换时，记得把请求地址改了
+6、vue_cli的右上角logo记得更换
+7、src\static\imgs\stamped.png 公章二维码需要添加
+8、添加用户协议
