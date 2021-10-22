@@ -3,11 +3,11 @@
     <div>
       <div class="header flex">
         <div class="f16 fw600 ml10">代办中心</div>
-        <span class="f12 color2" style="padding-top:3px">（仅展示前台提交且标记中的数据）</span>
+        <span class="f12 color2" style="padding-top: 3px">（仅展示前台提交且标记中的数据）</span>
       </div>
       <el-table :data="tableData" stripe>
         <el-table-column
-          v-for="(item,index) in tableHeader"
+          v-for="(item, index) in tableHeader"
           :key="index"
           :prop="item.prop"
           :label="item.name"
@@ -26,7 +26,7 @@
               @click.native.prevent="check(scope.$index, scope.row)"
               type="text"
               size="small"
-              style="color: #F56C6C;"
+              style="color: #f56c6c"
             >取消标记</el-button>
           </template>
         </el-table-column>
@@ -57,16 +57,15 @@ export default {
   methods: {
     //跳转界面
     editRow(index, row) {
-      console.log(index, row)
-      this.$router.push({
+      this.$router.push({ 
         path: row.path,
         query: {
-          phone:row.phone
+          phone: row.phone
         }
       })
     },
     // 已处理按钮
-    check(index,row){
+    check(index, row) {
       this.$confirm('已处理的代办提示将不再显示？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -82,15 +81,31 @@ export default {
     },
     //获取数据
     async getAgentsList() {
+      this.tableData = []
       var data = {
         skip: 0,
-        limit: 999,
+        limit: 9999,
         fuzz: 'handler',
         input: JSON.parse(sessionStorage.getItem('userInfo') || '{}').uid
       }
       await this.$axios.post(this.$api.findAgent, data).then(res => {
         if (res.code == 200) {
-          this.tableData = []
+          let arr = res.data[0].data
+          arr.map(item => {
+            if (item.read == 'false') {
+              this.tableData.push(item)
+            }
+          })
+        }
+      })
+      var data1 = {
+        skip: 0,
+        limit: 9999,
+        fuzz: 'handler',
+        input: 'all'
+      }
+      await this.$axios.post(this.$api.findAgent, data1).then(res => {
+        if (res.code == 200) {
           let arr = res.data[0].data
           arr.map(item => {
             if (item.read == 'false') {
