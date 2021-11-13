@@ -15,7 +15,7 @@
         v-for="(item, index) in scrolLists"
         :key="item.typeId"
         :title="item.type"
-        :name="index + 1"
+        :name="index"
       >
         <div
           v-for="(children, indec) in item.imgList"
@@ -98,7 +98,7 @@ export default {
           .token,
       },
       imgLimit: 100,
-      activeNames: ["1"],
+      activeNames: [0],
       scrollImgData: "",
       scrolLists: [
         {
