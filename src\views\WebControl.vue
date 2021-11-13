@@ -43,6 +43,7 @@
         </el-form>
         <div class="title mt20 mb20">新闻详情</div>
         <UE
+          v-if="showUE"
           :defaultMsg="ruleForm.content"
           :config="config"
           :id="ueId"
@@ -107,6 +108,7 @@ export default {
   },
   data() {
     return {
+      showUE:false,
       content: "",
       config: {
         initialFrameWidth: null,
@@ -154,6 +156,13 @@ export default {
     console.log(this.meth);
     this.getNewsList();
   },
+  watch:{
+    dialogVisible(val){
+      if(val){
+        this.showUE = val
+      }
+    }
+  },
   methods: {
     handleSizeChange(val) {
       this.find.limit = val;
@@ -175,10 +184,12 @@ export default {
     },
     //编辑按钮
     editRow(index, row) {
-      this.dialogVisible = true;
+      
       this.isAdd = false;
       this.ruleForm = row;
       this.row = row;
+      // this.showUE = true
+      this.dialogVisible = true;
     },
     //删除行
     deleteRow(index, row) {
@@ -196,15 +207,16 @@ export default {
       });
     },
     handleClose() {
-      (this.ruleForm = {
+      this.ruleForm = {
         newsname: "",
         message: "",
         num: "",
         creators: "",
         content: "",
         time: "",
-      }),
-        (this.dialogVisible = false);
+      }
+      this.dialogVisible = false;
+      // this.showUE = false;
     },
     async uploadAdd() {
       if (!this.ruleForm.newsname) {
