@@ -77,7 +77,7 @@
           </div>
         </el-form>
         <div class="title mt20 mb20">备注信息</div>
-        <UE :defaultMsg="ruleForm.remarks" :config="config" :id="ueId" ref="editor"></UE>
+        <UE  v-if="showUE" :defaultMsg="ruleForm.remarks" :config="config" :id="ueId" ref="editor"></UE>
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
@@ -132,6 +132,7 @@ export default {
   },
   data() {
     return {
+      showUE:false,
       config: {
         initialFrameWidth: null,
         initialFrameHeight: 220
@@ -210,6 +211,13 @@ export default {
     this.cloneRuleForm = JSON.parse(JSON.stringify(this.ruleForm))
     this.getNewsList()
   },
+  watch:{
+    dialogVisible(val){
+      if(val){
+        this.showUE = val
+      }
+    }
+  },
   methods: {
     upload() {
       this.dialogVisible = !this.dialogVisible
@@ -252,9 +260,10 @@ export default {
     },
     //编辑按钮
     editRow(index, row) {
+      this.ruleForm = row
       this.dialogVisible = true
       this.isAdd = false
-      this.ruleForm = row
+      // this.showUE = true
     },
     //删除行
     deleteRow(index, row) {
@@ -275,6 +284,7 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+      // this.showUE = false;
     },
     async uploadBtn(formName) {
       //提交
