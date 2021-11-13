@@ -1,28 +1,31 @@
+var URL = 'http://localhost:3030'
+// var URL = 'http://zlc.zhulif.com:3030'
+
 module.exports = {
-  devServer: {
-    open: true,
-    port: 8002,
-    https: false,
-    hotOnly: false,   
-    // http 代理配置
-    proxy: {      
-      '/api': {
-        target: 'http://localhost:3030',
-        changeOrigin: true,
-        // pathRewrite: {          
-        //   '^/api': '/api'
-        // }
-      },
-      '/upload/ueditor/image': {
-        target: 'http://localhost:3030',
-        changeOrigin: true
-      },
-      '/upload/ueditor/video': {
-        target: 'http://localhost:3030',
-        changeOrigin: true
-      }
+    devServer: {
+        // open: true,
+        // port: 8002,
+        // https: false,
+        // hotOnly: false,
+        // http 代理配置
+        proxy: {
+            '/api': {
+                target: URL,
+                changeOrigin: true,
+                // pathRewrite: {          
+                //   '^/api': '/api'
+                // }
+            },
+            '/upload/ueditor': {
+                target: URL,
+                changeOrigin: true
+            },
+            '/uploads': {
+                target: URL,
+                changeOrigin: true
+            }
+        },
+        before: (app) => {}
     },
-    before: (app) => {}
-  },
-  publicPath:''
+    publicPath: '/' //  ./ 或 /
 }
