@@ -5,14 +5,13 @@ Vue.use(VueRouter);
 // import Login from "../views/Login.vue";
 const Login = () => import("@/views/Login");
 const routes = [{
-    path: '/',
-    name:'登录',
-    component: Login,
-  }
-]
+  path: '/',
+  name: '登录',
+  component: Login,
+}]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash', // hash history
   routes //必须这样写routes
 })
 
