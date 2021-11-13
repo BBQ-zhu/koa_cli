@@ -64,7 +64,7 @@
           </div>
         </el-form>
         <div class="title mt20 mb20">备注信息</div>
-        <UE :defaultMsg="ruleForm.remarks" :config="config" :id="ueId" ref="editor"></UE>
+        <UE v-if="showUE" :defaultMsg="ruleForm.remarks" :config="config" :id="ueId" ref="editor"></UE>
       </span>
       <div class="flex mt10 windBtn">
         <el-button @click="handleClose">取 消</el-button>
@@ -119,6 +119,7 @@ export default {
   },
   data() {
     return {
+      showUE:false,
       config: {
         initialFrameWidth: null,
         initialFrameHeight: 220
@@ -153,9 +154,11 @@ export default {
       productClass: [],
       tableData: [],
       tableHeader: [
-        { name: '咨询人姓名', prop: 'proname' },
+        { name: '咨询产品', prop: 'proname' },
         { name: '咨询类型', prop: 'type' },
+        { name: '咨询人电话', prop: 'name' },
         { name: '咨询人电话', prop: 'phone' },
+        { name: '咨询备注', prop: 'remarks' },
         { name: '咨询时间', prop: 'time' }
       ],
       find: {
@@ -176,6 +179,13 @@ export default {
     this.findProductClass()
     this.getNewsList()
   },
+  watch:{
+    dialogVisible(val){
+      if(val){
+        this.showUE = val
+      }
+    }
+  },
   methods: {
     async findProductClass() {
       await this.$axios.post(this.$api.findProductClass).then(res => {
@@ -191,9 +201,9 @@ export default {
       })
     },
     upload() {
-      this.dialogVisible = !this.dialogVisible
       this.isAdd = true
       this.ruleForm = JSON.parse(JSON.stringify(this.cloneRuleForm))
+      this.dialogVisible = !this.dialogVisible
     },
     handleSizeChange(val) {
       this.find.limit = val
@@ -231,9 +241,10 @@ export default {
     },
     //编辑按钮
     editRow(index, row) {
-      this.dialogVisible = true
       this.isAdd = false
       this.ruleForm = row
+      this.dialogVisible = true
+      // this.showUE = true
     },
     //删除行
     deleteRow(index, row) {
@@ -253,7 +264,8 @@ export default {
       })
     },
     handleClose() {
-      this.dialogVisible = false
+      this.dialogVisible = false;
+      //  this.showUE = false;
     },
     async uploadBtn(formName) {
       //提交
