@@ -10,14 +10,11 @@
       v-else
       class="el-icon-s-fold f20 color0 pointer"
       @click="checkCollapse"
-    ></i> 
+    ></i>
     <div class="header_right">
-      <div class="badge_item" style="line-height: 60px">
-        <a href="#" class="f16">商城管理系统</a>
+      <div class="badge_item" style="line-height: 60px" >
+        <span class="f16 pointer" @click="toShop()">商城管理系统</span>
       </div>
-      <!-- <div class="badge_item" style="line-height: 60px">
-        <a href="#" class="f16">客服系统</a>
-      </div> -->
       <!-- 全屏 -->
       <i class="el-icon-full-screen badge_item pointer" @click="fullScree"></i>
       <!-- 警铃 -->
@@ -69,21 +66,21 @@
           class="demo-ruleForm"
         >
           <el-form-item label="旧密码" prop="oldPass">
-            <el-input
+            <el-input clearable 
               type="password"
               v-model="ruleForm.oldPass"
               autocomplete="off"
             ></el-input>
           </el-form-item>
           <el-form-item label="新密码" prop="pass">
-            <el-input
+            <el-input clearable 
               type="password"
               v-model="ruleForm.pass"
               autocomplete="off"
             ></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="checkPass">
-            <el-input
+            <el-input clearable 
               type="password"
               v-model="ruleForm.checkPass"
               autocomplete="off"
@@ -132,7 +129,7 @@ export default {
       }
     };
     return {
-      tableData:0,
+      tableData: 0,
       isCollapse: false,
       userInfo: "",
       dialogVisible: false,
@@ -149,12 +146,15 @@ export default {
     };
   },
   created() {
-    this.getAgentsList()
+    this.getAgentsList();
     this.userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
   },
   methods: {
-    toAgents(){
-      this.$router.push("/Agents")
+    toShop(){
+      window.open('http://cs.zjmy.live/admin','_blank')
+    },
+    toAgents() {
+      this.$router.push("/Agents");
     },
     //获取数据
     async getAgentsList() {
@@ -166,12 +166,12 @@ export default {
       };
       await this.$axios.post(this.$api.findAgent, data).then((res) => {
         if (res.code == 200) {
-          let arr = res.data[0].data
-          arr.map(item => {
-            if (item.read == 'false') {
-              this.tableData.push(item)
+          let arr = res.data[0].data;
+          arr.map((item) => {
+            if (item.read == "false") {
+              this.tableData.push(item);
             }
-          })
+          });
         }
       });
     },
@@ -196,8 +196,7 @@ export default {
       }
     },
     async logout() {
-      // sessionStorage.clear()
-      // this.$logsImg.createlogsImg(this.$api.uploadContractImg,this.ruleForm.imgurl) //添加操作日志
+      sessionStorage.clear()
       let data = {
         user: `${this.userInfo.username}(${this.userInfo.uid})`,
         logdata: "",
