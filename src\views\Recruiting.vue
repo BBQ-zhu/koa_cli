@@ -19,26 +19,32 @@
           class="demo-ruleForm flex"
           style="width: 90%"
         >
+        <el-form-item label="公司名称:" prop="companyname">
+            <el-input clearable 
+              v-model="ruleForm.companyname"
+              placeholder="请输入公司名称"
+            ></el-input>
+          </el-form-item>
           <el-form-item label="招聘职位:" prop="name">
-            <el-input
+            <el-input clearable 
               v-model="ruleForm.name"
               placeholder="请输入招聘职位"
             ></el-input>
           </el-form-item>
           <el-form-item label="薪资范围:" prop="salary">
-            <el-input
+            <el-input clearable 
               v-model="ruleForm.salary"
               placeholder="请输入薪资范围"
             ></el-input>
           </el-form-item>
           <el-form-item label="工作地址:" prop="address">
-            <el-input
+            <el-input clearable 
               v-model="ruleForm.address"
               placeholder="请输入工作地址"
             ></el-input>
           </el-form-item>
           <el-form-item label="学历要求:" prop="education">
-            <el-input
+            <el-input clearable 
               v-model="ruleForm.education"
               placeholder="请输入学历要求"
             ></el-input>
@@ -112,7 +118,7 @@ export default {
   },
   data() {
     return {
-      showUE:false,
+      showUE: false,
       config: {
         initialFrameWidth: null,
         initialFrameHeight: 220,
@@ -121,6 +127,7 @@ export default {
       dialogVisible: false,
       isAdd: true,
       ruleForm: {
+        companyname:'',
         name: "",
         salary: "",
         address: "",
@@ -128,6 +135,7 @@ export default {
         details: "",
       },
       rules: {
+        companyname: [{ required: true, message: "请输入公司名称", trigger: "blur" }],
         name: [{ required: true, message: "请输入招聘岗位", trigger: "blur" }],
         salary: [
           { required: true, message: "请输入薪资范围", trigger: "blur" },
@@ -141,6 +149,7 @@ export default {
       },
       tableData: [],
       tableHeader: [
+        { name: "公司名称", prop: "companyname" },
         { name: "招聘岗位", prop: "name" },
         { name: "薪资范围", prop: "salary" },
         { name: "工作地址", prop: "address" },
@@ -159,12 +168,12 @@ export default {
     this.mixinMethod(this.$route.path);
     this.getNewsList();
   },
-  watch:{
-    dialogVisible(val){
-      if(val){
-        this.showUE = val
+  watch: {
+    dialogVisible(val) {
+      if (val) {
+        this.showUE = val;
       }
-    }
+    },
   },
   methods: {
     handleSizeChange(val) {
@@ -184,10 +193,9 @@ export default {
         this.tableData = res.data[0].data;
         this.find.total = res.data[0].total[0].total;
       });
-    }, 
+    },
     //编辑按钮
     editRow(index, row) {
-      
       this.isAdd = false;
       this.ruleForm = row;
       // this.showUE = true
