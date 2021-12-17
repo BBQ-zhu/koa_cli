@@ -1,3 +1,5 @@
+var port = normalizePort(process.env.PORT || config.port);
+console.log( config.port + '端口号监听成功!')
 # vue_cli
 
 ## Project setup
@@ -54,9 +56,32 @@ import '../public/UE/ueditor.config.js' import '../public/UE/ueditor.all.min.js'
 注意点：
 数据可视化：https://github.com/bym110/vue-echarts
 1、用户点击某个产品得立即办理后，会发送一条代办消息，代办消息默认是all，即所有人可见，如果是贷款资料得提交则会提交给对应的人。
-2、代办中心展示给处理人为all和权证经理
+2、代办中心展示给处理人为all和金融客服
 4、线上和本地切换时，短信登录处需要修改
 5、线上和本地切换时，记得把请求地址改了
 6、vue_cli的右上角logo记得更换
 7、src\static\imgs\stamped.png 公章二维码需要添加
 8、添加用户协议
+9、本地调试时要把短信通知打开
+
+1、两个客户端首页添加了判断是移动端还是pc端的代码，再正式环境和本地环境需要改改跳转地址
+
+2、线上和本地需要切换短信发送接口 koa--- routes\Mobile\vipUser.js 137行
+
+3、综合服务中的领取人为客户经理，而贷款客户和企业客户领取人是金融客服，大数据权限不开就没法看全部客户
+
+uniapp中：
+loan上传限制了，新增了一个文件用来保存js以下的代码
+src\pages\loan\loan2.vue
+移动前端index.html文件删除客服代码
+
+
+
+vue_cli中：全局替换
+<el-input 替换为
+<el-input clearable 
+
+所有权证经理改金融客服
+审核经理改代办客服
+
+重新npm i
