@@ -2,7 +2,7 @@
   <div class="card">
     <div class="header flex">
       <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="uploadNew">发起签约</el-button>
-      <el-select
+      <el-select clearable 
         class="ml20"
         v-model="selectInput"
         placeholder="请选择合同类型"
@@ -15,8 +15,8 @@
           :value="item.name"
         ></el-option>
       </el-select>
-      <el-input placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
-        <el-select v-model="classType" slot="prepend" placeholder="请选择" style="width: 120px">
+      <el-input clearable  placeholder="请输入内容" v-model="input" class="input-with-select findInput ml20">
+        <el-select clearable  v-model="classType" slot="prepend" placeholder="请选择" style="width: 120px">
           <el-option
             v-for="(item, index) in tableHeader"
             :key="index + 'h'"
@@ -30,7 +30,7 @@
           @click="(find.currentPage = 1), getNewsList()"
         ></el-button>
       </el-input>
-      <!-- <el-input placeholder="请输入产品名称" v-model="input" class="input-with-select findInput ml20">
+      <!-- <el-input clearable  placeholder="请输入产品名称" v-model="input" class="input-with-select findInput ml20">
         <el-button slot="append" icon="el-icon-search" @click="classType = 'name',getNewsList()"></el-button>
       </el-input>-->
     </div>
@@ -47,7 +47,7 @@
         >
           <div class="flex">
             <el-form-item label="合同类型:" prop="type">
-              <el-select style="width: 100%" v-model="ruleForm.type" placeholder="请选择合同类型">
+              <el-select clearable  style="width: 100%" v-model="ruleForm.type" placeholder="请选择合同类型">
                 <el-option
                   v-for="item in dynamicTags"
                   :key="item._id"
@@ -57,17 +57,17 @@
               </el-select>
             </el-form-item>
             <el-form-item label="客户电话:" prop="phone">
-              <el-input v-model="ruleForm.phone" placeholder="请输入客户电话" @blur="findVipUser"></el-input>
+              <el-input clearable  v-model="ruleForm.phone" placeholder="请输入客户电话" @blur="findVipUser"></el-input>
             </el-form-item>
             <el-form-item label="客户名称:" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="请输入客户名称"></el-input>
+              <el-input clearable  v-model="ruleForm.name" placeholder="请输入客户名称"></el-input>
             </el-form-item>
 
             <el-form-item label="放款金额:" prop="expenses">
-              <el-input v-model="ruleForm.expenses" placeholder="请输入放款金额"></el-input>
+              <el-input clearable  v-model="ruleForm.expenses" placeholder="请输入放款金额"></el-input>
             </el-form-item>
             <el-form-item label="客户经理:" prop="manager1">
-              <el-select v-model="ruleForm.manager1" filterable placeholder="请选择">
+              <el-select clearable  v-model="ruleForm.manager1" filterable placeholder="请选择">
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -76,8 +76,8 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="权证经理:" prop="manager2">
-              <el-select v-model="ruleForm.manager2" filterable placeholder="请选择">
+            <el-form-item label="金融客服:" prop="manager2">
+              <el-select clearable  v-model="ruleForm.manager2" filterable placeholder="请选择">
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -86,8 +86,8 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="审核经理:" prop="manager3">
-              <el-select v-model="ruleForm.manager3" filterable placeholder="请选择">
+            <el-form-item label="代办客服:" prop="manager3">
+              <el-select clearable  v-model="ruleForm.manager3" filterable placeholder="请选择">
                 <el-option
                   v-for="item in userList"
                   :key="item.value"
@@ -97,34 +97,34 @@
               </el-select>
             </el-form-item>
             <el-form-item label="收费方式:" prop="mode">
-              <el-select style="width: 100%" v-model="ruleForm.mode" placeholder="请选择收费方式">
+              <el-select clearable  style="width: 100%" v-model="ruleForm.mode" placeholder="请选择收费方式">
                 <el-option label="比例收费" value="比例收费"></el-option>
                 <el-option label="直接收费" value="直接收费"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item v-if="ruleForm.mode == '比例收费'" label="抽成比例(%):" prop="ratio">
-              <el-input v-model="ruleForm.ratio" placeholder="抽成比例:例如3"></el-input>
+              <el-input clearable  v-model="ruleForm.ratio" placeholder="抽成比例:例如3"></el-input>
             </el-form-item>
             <el-form-item v-if="ruleForm.mode == '直接收费'" label="服务费用:" prop="service">
-              <el-input v-model="ruleForm.service" placeholder="请输入服务费用"></el-input>
+              <el-input clearable  v-model="ruleForm.service" placeholder="请输入服务费用"></el-input>
             </el-form-item>
             <el-form-item label="贷款类型:" prop="loantype">
-              <el-select style="width: 100%" v-model="ruleForm.loantype" placeholder="请选择贷款类型">
+              <el-select clearable  style="width: 100%" v-model="ruleForm.loantype" placeholder="请选择贷款类型">
                 <el-option label="抵押贷款" value="抵押贷款"></el-option>
                 <el-option label="信用贷款" value="信用贷款"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item :label="ruleForm.loantype == '抵押贷款' ? '抵押物：':'申请物：'" prop="collateral">
-              <el-input v-model="ruleForm.collateral" placeholder="请输入抵押物、申请物"></el-input>
+              <el-input clearable  v-model="ruleForm.collateral" placeholder="请输入抵押物、申请物"></el-input>
             </el-form-item>
             <el-form-item label="服务保证金:" prop="margin">
-              <el-input v-model="ruleForm.margin" placeholder="请输入服务保证金"></el-input>
+              <el-input clearable  v-model="ruleForm.margin" placeholder="请输入服务保证金"></el-input>
             </el-form-item>
             <el-form-item label="付款方式:" prop="manner">
-              <el-input v-model="ruleForm.manner" placeholder="请输入付款方式"></el-input>
+              <el-input clearable  v-model="ruleForm.manner" placeholder="请输入付款方式"></el-input>
             </el-form-item>
             <el-form-item label="签约提示:" prop="conname">
-              <el-input v-model="ruleForm.conname" placeholder="请输入签约提示"></el-input>
+              <el-input clearable  v-model="ruleForm.conname" placeholder="请输入签约提示"></el-input>
             </el-form-item>
             <el-form-item label="起始日期:" prop="startime">
               <el-date-picker
@@ -145,18 +145,18 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item label="提示方式:" prop="optertime">
-              <el-select style="width: 100%" v-model="ruleForm.optertime" placeholder="请选择提示方式">
+              <el-select clearable  style="width: 100%" v-model="ruleForm.optertime" placeholder="请选择提示方式">
                 <el-option label="月提示" value="月提示"></el-option>
                 <el-option label="年提示" value="年提示"></el-option>
                 <el-option label="不提示" value="不提示"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="提示日期:" prop="tipstime">
-              <el-input placeholder="请输入提前几天提示,例：7" v-model="ruleForm.tipstime"></el-input>
+              <el-input clearable  placeholder="请输入提前几天提示,例：7" v-model="ruleForm.tipstime"></el-input>
             </el-form-item>
             
             <el-form-item label="签约状态:" prop="status">
-              <el-select
+              <el-select clearable 
                 style="width: 100%"
                 v-model="ruleForm.status"
                 placeholder="请选择签约状态"
@@ -170,7 +170,7 @@
             </el-form-item>
             <el-form-item label="合同图片:" prop="imgurl">
               <div style="position: relative">
-                <el-input placeholder="请上传合同图片" v-model="ruleForm.imgurl" disabled></el-input>
+                <el-input clearable  placeholder="请上传合同图片" v-model="ruleForm.imgurl" disabled></el-input>
                 <el-upload
                   v-if="meth[0] || meth[2]"
                   style="position: absolute; top: 0; right: -110px"
@@ -221,7 +221,12 @@
         :label="item.name"
         show-overflow-tooltip
         min-width="100px"
-      ></el-table-column>
+      >
+      <template slot-scope="scope">
+          <span v-if="item.prop == 'phone'">{{$common.phoneNum(scope.row[item.prop])}}</span>
+          <span v-else>{{ scope.row[item.prop] }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="100px">
         <template slot-scope="scope">
           <el-button
@@ -305,8 +310,8 @@ export default {
         optertime: '',
         tipstime: '7',
         manager1: '', //客户经理
-        manager2: '', //权证经理
-        manager3: '', //审核经理
+        manager2: '', //金融客服
+        manager3: '', //代办客服
         time: '' //创建时间
       },
       rules: {
@@ -338,11 +343,11 @@ export default {
       tableData: [],
       tableHeader: [
         { name: '合同类型', prop: 'type' },
-        { name: '签约状态', prop: 'status' },
         { name: '客户电话', prop: 'phone' },
         { name: '放款金额', prop: 'expenses' },
         { name: '客户经理', prop: 'manager1' },
-        { name: '权证经理', prop: 'manager2' },
+        { name: '金融客服', prop: 'manager2' },
+        { name: '签约状态', prop: 'status' },
         { name: '创建时间', prop: 'time' }
       ],
       find: {
@@ -472,8 +477,8 @@ export default {
         optertime: '',
         tipstime: '7',
         manager1: '', //客户经理
-        manager2: '', //权证经理
-        manager3: '', //审核经理
+        manager2: '', //金融客服
+        manager3: '', //代办客服
         time: '' //创建时间
       }
       this.dialogVisible = true
