@@ -65,11 +65,15 @@ module.exports = {
         },
         {
             name: 'Customer',
-            msg: '资料中心-贷款资料'
+            msg: '资料中心-贷款客户'
         },
         {
             name: 'Enterprise',
-            msg: '资料中心-企业资料'
+            msg: '资料中心-企业客户' 
+        },
+        {
+            name: 'Mortgages',
+            msg: '资料中心-抵押客户'
         },
         {
             name: 'Integrate',
@@ -103,11 +107,15 @@ module.exports = {
             msg: '-图片'
         }
     ],
+    //访问量统计
+    findStatistics:'statistics/findStatistics',
+    createStatistics:'statistics/createStatistics',
+    updateStatistics:'statistics/updateStatistics',
     //内部资料
-    createInternal:'internal/createInternal',
-    findInternal:'internal/findInternal',
-    updateInternal:'internal/updateInternal',
-    deleteInternal:'internal/deleteInternal',
+    createInternal: 'internal/createInternal',
+    findInternal: 'internal/findInternal',
+    updateInternal: 'internal/updateInternal',
+    deleteInternal: 'internal/deleteInternal',
     //代办中心
     createAgent: 'agents/createAgent',
     deleteAgent: 'agents/deleteAgent',
@@ -178,16 +186,21 @@ module.exports = {
     addTeam: 'roles/addTeam',
     delTeam: 'roles/delTeam',
     findTeam: 'roles/findTeam',
-    //客户资料
+    //客户客户
     findCustomer: 'customer/findCustomer',
     createCustomer: 'customer/createCustomer',
     updateCustomer: 'customer/updateCustomer',
     deleteCustomer: 'customer/deleteCustomer',
-    //企业资料
+    //企业客户
     createEnterprise: 'customer/createEnterprise',
     deleteEnterprise: 'customer/deleteEnterprise',
     updateEnterprise: 'customer/updateEnterprise',
     findEnterprise: 'customer/findEnterprise',
+    //抵押客户
+    findMortgages: 'customer/findMortgages',
+    createMortgages: 'customer/createMortgages',
+    updateMortgages: 'customer/updateMortgages',
+    deleteMortgages: 'customer/deleteMortgages',
     //咨询客户-综合服务
     createIntegrate: 'service/createIntegrate',
     deleteIntegrate: 'service/deleteIntegrate',
