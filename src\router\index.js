@@ -16,9 +16,17 @@ const router = new VueRouter({
 })
 
 //全局路由导航守卫 前置守卫
-// router.beforeEach((to, from, next) => {
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  if(to.path == '/' || to.path == '/Login'){
+    next()
+    return
+  }else if(sessionStorage.getItem("userInfo")){
+    next()
+  }else{
+    next('/')
+    return
+  }
+})
 
 //后置守卫
 // router.afterEach((to,from)=>{
