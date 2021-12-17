@@ -50,13 +50,13 @@
           class="demo-ruleForm flex"
         >
           <el-form-item label="跳转产品:" prop="link">
-            <el-input
+            <el-input clearable 
               v-model="ruleForm.link"
               placeholder="例：工商注册"
             ></el-input>
           </el-form-item>
           <el-form-item label="展示位置:" prop="typeid">
-            <el-select v-model="ruleForm.typeid" placeholder="请选择展示位置">
+            <el-select clearable  v-model="ruleForm.typeid" placeholder="请选择展示位置">
               <el-option
                 v-for="item in scrolLists"
                 :key="item.typeId"
@@ -127,13 +127,8 @@ export default {
           imgList: [],
         },
         {
-          type: "移动端-我的企业",
-          typeId: "myBusiness",
-          imgList: [],
-        },
-        {
-          type: "移动端-我的金融",
-          typeId: "myFinances",
+          type: "移动端-意见/投诉",
+          typeId: "complain",
           imgList: [],
         },
         {
@@ -145,15 +140,22 @@ export default {
           type: "电脑端-顶部Logo(左右各一张,等宽)",
           typeId: "logo",
           imgList: [],
-        },{
+        },
+        {
           type: "电脑端-首页轮播(长宽比2：1)",
           typeId: "pcScroll",
           imgList: [],
-        },{
+        },
+        {
           type: "电脑端-底部二维码(传1张)",
           typeId: "erweima",
           imgList: [],
         },
+        {
+          type: "合作机构Logo(长宽比7:3)",
+          typeId: "institutions",
+          imgList: [],
+        }
       ],
       dialogVisible: false,
       ruleForm: {
