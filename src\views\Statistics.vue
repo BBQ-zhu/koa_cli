@@ -46,12 +46,52 @@
         </div>
       </div>
     </div>
-    <!-- 图表 -->
-    <div class="card mt20">
-      <div class="flex">
-        <div v-if="mainShow" id="main1" style="width: 60%;height:400px;"></div>
-        <div v-if="mainShow" id="main2" style="width: 40%;height:400px;"></div>
+    <!-- 访问量和产品图表 -->
+    <div class="mt20">
+      <div class="flexBetween">
+        <div class="card" id="main1" style="width: 59.3%;height:400px;"></div>
+        <div class="card" id="main2" style="width: 39.3%;height:400px;"></div>
       </div>
+    </div>
+
+    <!-- 客户数据图表 -->
+    <div class="card mt20">
+      <div class="flexBetween">
+        <div></div>
+        <div>
+          <el-tag
+            :type="tagNowDate == '今日'?'danger':'info'"
+            class="mr10 pointer"
+            @click="tagNowDate = '今日'"
+          >今日</el-tag>
+          <el-tag
+            :type="tagNowDate == '今月'?'danger':'info'"
+            class="mr10 pointer"
+            @click="tagNowDate = '今月'"
+          >今月</el-tag>
+          <el-tag
+            :type="tagNowDate == '今年'?'danger':'info'"
+            class="mr10 pointer"
+            @click="tagNowDate = '今年'"
+          >今年</el-tag>
+          <el-tag
+            :type="tagNowDate == '全部'?'danger':'info'"
+            class="pointer"
+            @click="tagNowDate = '全部'"
+          >全部</el-tag>
+        </div>
+      </div>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="意向客户量" name="意向客户量">
+          <!-- <div id="main3" style="width: 100%;height:400px;"></div> -->
+        </el-tab-pane>
+        <el-tab-pane label="贷款客户量" name="贷款客户量">
+          <!-- <div id="main4" style="width: 100%;height:400px;"></div> -->
+        </el-tab-pane>
+        <el-tab-pane label="企业客户量" name="企业客户量">
+          <!-- <div id="main5" style="width: 100%;height:400px;"></div> -->
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <div class="card mt20">
       <div class="header flex">
@@ -105,7 +145,8 @@ var echarts = require('echarts')
 export default {
   data() {
     return {
-      mainShow:true,
+      tagNowDate: '今日',
+      activeName: '意向客户量',
       tableHeader: [
         { name: '员工姓名', prop: 'username' },
         { name: '员工ID', prop: 'uid' },
@@ -130,8 +171,8 @@ export default {
       anglepro: [], //产品热度前十位
       vipUser: 0, //系统会员用户量
       expenses: 0, //总放款额
-      monthlist:[], //当年访问量分月
-      allStatic:0 //总访问量
+      monthlist: [], //当年访问量分月
+      allStatic: 0 //总访问量
     }
   },
   async mounted() {
@@ -141,24 +182,23 @@ export default {
     await this.getUserList() //员工列表
     await this.getProductList() // 产品数量和热度统计
     await this.statistic() //访问量统计
-    await this.echart()
-
-    
-    
+    await this.getAllData() // 意向客户、贷款客户、企业客户统计
+    await this.echart() // 图表初始化
   },
   methods: {
+    //访问量统计
     async statistic() {
       var data = { year: new Date().getFullYear() }
       await this.$axios.post(this.$api.findStatistics, data).then(res => {
-        if (res.code == 200 ) {
+        if (res.code == 200) {
           this.monthlist = res.data[0].monthlist
         }
       })
       this.$axios.post(this.$api.findStatistics, {}).then(res => {
-        if (res.code == 200 ) {
+        if (res.code == 200) {
           let arr = res.data
-          for(let item of arr){
-            item.monthlist.map(val=>{
+          for (let item of arr) {
+            item.monthlist.map(val => {
               this.allStatic = parseInt(this.allStatic) + parseInt(val)
             })
           }
@@ -181,10 +221,52 @@ export default {
         })
       })
     },
+    // 意向客户、贷款客户、企业客户统计
+    async getAllData() {
+      var data = {
+        skip: 0,
+        limit: 9999999999,
+        category: '全部客户', //客户类别 我的客户、公海客户、全部客户
+        classTypename: 'type',
+        classType: '意向客户' // 业务类别
+      }
+      this.$axios.post(this.$api.findIntegrate, data).then(res => {
+        let arr = res.data[0].data
+        this.chichData(arr)
+      })
+    },
+    chichData(data) {
+      // tagNowDate:'今日', activeName:'意向客户量',
+      let nowdate = `${new Date().getFullYear()}/${new Date().getMonth() +
+        1}/${new Date().getDate()}`
+      if (this.tagNowDate == '今日') {
+        let obj = {}
+        for (let item of data) {
+          console.log(item.time.split(' ')[0])
+          if (item.time.split(' ')[0] == nowdate) {
+            if (obj[item.manager1]) obj[item.manager1]++
+            else obj[item.manager1] = 1
+          }
+        }
+        let arr1 = []
+        for (var o in obj) {
+          arr1.push({
+            el: o,
+            count: obj[o]
+          })
+        }
+        console.log(arr1)
+        console.log(this.getChaName('00056'))
+      }
+    },
+    // 统计类别切换
+    handleClick(tab, event) {
+      console.log(this.activeName)
+    },
     // 图表初始化
     echart() {
       var myChart1 = echarts.init(document.getElementById('main1'))
-      // 绘制图表
+      // 分月统计访问量
       myChart1.setOption({
         title: {
           text: '访问量分月统计'
@@ -211,11 +293,11 @@ export default {
           {
             name: '访问量',
             type: 'bar',
-            data:  this.monthlist
+            data: this.monthlist
           }
         ]
       })
-      //产品浏览量赋值
+      //产品热度前十
       var myChart2 = echarts.init(document.getElementById('main2'))
       myChart2.setOption({
         title: {
@@ -231,6 +313,49 @@ export default {
           }
         ]
       })
+      //客户数据提交量统计
+      var myChart3 = echarts.init(document.getElementById('main3'))
+      myChart3.setOption({
+        title: {
+          text: '客户数据提交量统计'
+        },
+        tooltip: {},
+        xAxis: {
+          data: [
+            '1月',
+            '2月',
+            '3月',
+            '4月',
+            '5月',
+            '6月',
+            '7月',
+            '8月',
+            '9月',
+            '10月',
+            '11月',
+            '12月'
+          ]
+        },
+        yAxis: {},
+        series: [
+          {
+            name: '访问量',
+            type: 'bar',
+            data: this.monthlist
+          }
+        ]
+      })
+    },
+    //反查员工中文名
+    getChaName(uid){
+      let name=''
+      for(let item of this.userList){
+        if(item.uid == uid){
+          name = item.username
+          break;
+        }
+      }
+      return name
     },
     //获取系统用户列表
     async getVipUserList() {
@@ -303,15 +428,13 @@ export default {
       let arr2 = await this.findCont('manager2', uid)
       let arr3 = await this.findCont('manager3', uid)
       let arr = arr1.concat(arr2).concat(arr3)
-      return arr // 业绩统计（只要当前员工包含在客户经理、金融客服、代办客服中的一个，都会算业绩，且可以同时担任多个经理，业绩就翻倍）
+      return arr // 业绩统计（只要当前员工包含在客户经理、客服经理、代办客服中的一个，都会算业绩，且可以同时担任多个经理，业绩就翻倍）
     },
     //根据合同列表分时间段统计业绩
     statistics(arr) {
       let obj = { month: 0, year: 0, all: 0 }
-      let nowTieme = new Date()
-        .toLocaleString()
-        .split(' ')[0]
-        .split('/')
+      let nowTieme = `${new Date().getFullYear()}/${new Date().getMonth() +
+        1}/${new Date().getDate()}`.split('/')
       arr.map(item => {
         // let time = item.time.split(" ")[0].split("/"); // 用户签字时间
         let time = item.startime.split('-') // 合同起始时间
@@ -383,8 +506,8 @@ export default {
   padding: 30px 0;
   font-weight: 800;
 }
-.headLeft{
-  border-left:3px solid #45b2fd;
-  padding-left:4px;
+.headLeft {
+  border-left: 3px solid #45b2fd;
+  padding-left: 4px;
 }
 </style>
