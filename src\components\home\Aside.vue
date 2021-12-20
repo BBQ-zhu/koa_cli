@@ -11,12 +11,8 @@
       active-text-color="#fff"
     >
       <div class="bgColor logo">
-        <img :src="isCollapse ? '' : '/imgs/logo.PNG'" />
-        <!-- <img
-          v-if="!isCollapse"
-          style="height: 60px; margin-left: 38px"
-          src=""
-        /> -->
+        <img v-if="!isCollapse" src="/imgs/logo.png" style="width:200px;height:60px;"/>
+        <img v-else src="/imgs/logo2.png" style="width:22px;height:22px;margin:21px 20px;"/>
       </div>
       <el-submenu
         v-for="(item, index) in routerList"
@@ -76,11 +72,11 @@ export default {
 
 <style lang="scss" scoped>
 ::v-deep ::-webkit-scrollbar {
-	width: 0px;
-	/* 纵向滚动条*/
-	height: 0px;
-	/* 横向滚动条 */
-	background-color: #fff;
+  width: 0px;
+  /* 纵向滚动条*/
+  height: 0px;
+  /* 横向滚动条 */
+  background-color: #fff;
 }
 .aside {
   height: calc(100vh);
