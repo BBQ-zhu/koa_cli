@@ -12,7 +12,7 @@
         <el-option label="我的客户" value="我的客户"></el-option>
         <el-option label="公海客户" value="公海客户"></el-option>
         <el-option
-          v-if="userInfo && userInfo.seedata && userInfo.seedata=='是'"
+          v-if="userInfo && userInfo.seeall && userInfo.seeall=='是'"
           label="全部客户"
           value="全部客户"
         ></el-option>
@@ -791,7 +791,7 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="金融客服:" prop="manager2">
+                <el-form-item label="客服经理:" prop="manager2">
                   <el-select
                     clearable
                     style="width:100%"
@@ -1033,7 +1033,7 @@ export default {
         conrelat4: '', //联系人的关系4
         hometeam: '', //归属团队
         manager1: '', //客户经理
-        manager2: '', //金融客服
+        manager2: '', //客服经理
         manager3: '', //代办客服
         status: '待审核', //审核状态
         remarks: '', //备注信息
@@ -1081,7 +1081,7 @@ export default {
         { name: '是否有车', prop: 'car' },
         { name: '是否有房', prop: 'houses' },
         { name: '客户经理', prop: 'manager1' },
-        { name: '金融客服', prop: 'manager2' },
+        { name: '客服经理', prop: 'manager2' },
         { name: '审核状态', prop: 'status' },
         { name: '创建时间', prop: 'time' }
       ],
@@ -1243,7 +1243,7 @@ export default {
       //提交
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          if (!/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.phone)) {
+          if (!/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.phone)) {
             this.$message.error('请输入正确手机号')
             return
           }
@@ -1256,18 +1256,18 @@ export default {
               this.ruleForm.hires &&
               this.ruleForm.hires != '自由职业' &&
               this.ruleForm.hires != '无固定职业' &&
-              !/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.unitphone)
+              !/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.unitphone)
             ) {
               this.$message.error('请输入正确单位/负责人电话')
               return
             }
             if (
               (this.ruleForm.contacts1 &&
-                !/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.conphone1)) ||
+                !/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.conphone1)) ||
               (this.ruleForm.contacts2 &&
-                !/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.conphone2)) ||
+                !/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.conphone2)) ||
               (this.ruleForm.contacts3 &&
-                !/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.conphone3))
+                !/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.conphone3))
             ) {
               this.$message.error('请输入正确紧急联系人手机号')
               return
