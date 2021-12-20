@@ -31,6 +31,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        show-overflow-tooltip
         v-for="(item, index) in tableHeader"
         :key="index + '1'"
         :prop="item.prop"
@@ -43,7 +44,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" min-width="100px">
-        <template slot-scope="scope">
+        <template slot-scope="scope" v-if="scope.row.uid!='00000'">
           <el-button
             @click.native.prevent="editRow(scope.$index, scope.row)"
             type="text"
@@ -155,7 +156,7 @@
                 <el-option label="否" value="否"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="咨询师介绍:" prop="intro">
+            <el-form-item label="顾问介绍:" prop="intro">
               <el-input
                 clearable
                 v-model="ruleForm.intro"
@@ -165,10 +166,10 @@
             </el-form-item>
             <el-tooltip
               effect="dark"
-              content="开启权限将可以查看综合服务、贷款客户、企业客户中的全部客户数据，且移动端将开启大数据查询权限"
+              content="是否有权使用移动端-员工中心-客户查询权限"
               placement="top"
             >
-              <el-form-item label="大数据权限:" prop="seedata">
+              <el-form-item label="客户查询:" prop="seedata">
                 <el-select
                   clearable
                   style="width: 217px"
@@ -180,7 +181,23 @@
                 </el-select>
               </el-form-item>
             </el-tooltip>
-
+            <el-tooltip
+              effect="dark"
+              content="是否有权查看综合服务、贷款客户、企业客户中的全部客户数据"
+              placement="top"
+            >
+              <el-form-item label="全部客户:" prop="seeall">
+                <el-select
+                  clearable
+                  style="width: 217px"
+                  v-model="ruleForm.seedata"
+                  placeholder="是否开启权限"
+                >
+                  <el-option label="是" value="是"></el-option>
+                  <el-option label="否" value="否"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-tooltip>
             <el-form-item label="员工头像:" prop="imgurl">
               <div style="position: relative;width: 217px">
                 <el-input clearable placeholder="请上传员工头像" v-model="ruleForm.imgurl" disabled></el-input>
@@ -265,7 +282,8 @@ export default {
         address: '', //家庭住址
         isrecomed: '', //是否推荐至咨询顾问
         intro: '', //顾问介绍
-        seedata: '否', //大数据权限
+        seedata: '否', //客户查询
+        seeall: '否', //全部客户
         remarks: '',
         time: ''
       },
@@ -429,7 +447,8 @@ export default {
         address: '', //家庭住址
         isrecomed: '', //是否推荐至咨询顾问
         intro: '', //顾问介绍
-        seedata: '否', //大数据权限
+        seedata: '否', //客户查询
+        seeall: '否', //全部客户
         remarks: '',
         time: ''
       }
@@ -439,7 +458,7 @@ export default {
       let _this = this
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          if (!/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.phone)) {
+          if (!/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.phone)) {
             this.$message.error('请输入正确手机号')
             return
           }
@@ -447,7 +466,10 @@ export default {
             this.$message.error('请输入正确身份证号')
             return
           }
-          let newdata = {
+          
+          _this.ruleForm.remarks = _this.$refs.editor.getUEContent()
+          if (_this.isAdd) {
+            let newdata = {
             skip: 0,
             limit: 9,
             fuzz: 'phone',
@@ -460,8 +482,6 @@ export default {
               return
             }
           }
-          _this.ruleForm.remarks = _this.$refs.editor.getUEContent()
-          if (_this.isAdd) {
             //新增
             delete _this.ruleForm._id
             _this.createNewUser()
