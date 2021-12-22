@@ -17,8 +17,7 @@
           value="全部客户"
         ></el-option>
       </el-select>
-      <el-input
-        clearable
+      <el-input clearable
         placeholder="请输入内容"
         v-model="input"
         class="input-with-select findInput ml20"
@@ -51,25 +50,25 @@
             <el-collapse-item title="基本情况" name="1">
               <div class="flex">
                 <el-form-item label="客户姓名:" prop="name">
-                  <el-input clearable v-model="ruleForm.name" placeholder="请输入客户姓名"></el-input>
+                  <el-input clearable  v-model="ruleForm.name" placeholder="请输入客户姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系电话:" prop="phone">
-                  <el-input clearable v-model="ruleForm.phone" placeholder="请输入联系电话"></el-input>
+                  <el-input clearable  v-model="ruleForm.phone" placeholder="请输入联系电话"></el-input>
                 </el-form-item>
                 <el-form-item label="身份证号:" prop="idcard">
-                  <el-input clearable v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
+                  <el-input clearable  v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
                 </el-form-item>
                 <el-form-item label="客户年龄:" prop="age">
-                  <el-input clearable v-model="ruleForm.age" placeholder="请输入客户年龄"></el-input>
+                  <el-input clearable  v-model="ruleForm.age" placeholder="请输入客户年龄"></el-input>
                 </el-form-item>
                 <el-form-item label="需求资金(万):" prop="fund">
-                  <el-input clearable v-model="ruleForm.fund" placeholder="请输入需求资金(万)"></el-input>
+                  <el-input clearable  v-model="ruleForm.fund" placeholder="请输入需求资金(万)"></el-input>
                 </el-form-item>
                 <el-form-item label="资金用途:" prop="utility">
-                  <el-input clearable v-model="ruleForm.utility" placeholder="请输入资金用途"></el-input>
+                  <el-input clearable  v-model="ruleForm.utility" placeholder="请输入资金用途"></el-input>
                 </el-form-item>
                 <el-form-item label="贷款期限(月):" prop="tenor">
-                  <el-input clearable v-model="ruleForm.tenor" placeholder="请输入贷款期限(月)"></el-input>
+                  <el-input clearable  v-model="ruleForm.tenor" placeholder="请输入贷款期限(月)"></el-input>
                 </el-form-item>
                 <el-form-item label="婚姻状况:" prop="matrimony">
                   <el-select
@@ -89,7 +88,7 @@
                   label="子女姓名:"
                   prop="children"
                 >
-                  <el-input clearable v-model="ruleForm.children" placeholder="请输入子女姓名"></el-input>
+                  <el-input clearable  v-model="ruleForm.children" placeholder="请输入子女姓名"></el-input>
                 </el-form-item>
                 <el-form-item v-if="ruleForm.matrimony == '已婚'" label="配偶是否知晓:" prop="knowing">
                   <el-select
@@ -103,7 +102,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="户籍所在地:" prop="domicile">
-                  <el-input clearable v-model="ruleForm.domicile" placeholder="请输入户籍所在地"></el-input>
+                  <el-input clearable  v-model="ruleForm.domicile" placeholder="请输入户籍所在地"></el-input>
                 </el-form-item>
                 <el-form-item label="现居城市:" prop="address">
                   <el-cascader
@@ -113,7 +112,7 @@
                   ></el-cascader>
                 </el-form-item>
                 <el-form-item label="详细地址:" prop="addressdetail">
-                  <el-input clearable v-model="ruleForm.addressdetail" placeholder="请输入详细居住地址"></el-input>
+                  <el-input clearable  v-model="ruleForm.addressdetail" placeholder="请输入详细居住地址"></el-input>
                 </el-form-item>
               </div>
             </el-collapse-item>
@@ -139,30 +138,30 @@
                   v-show="ruleForm.hires && (ruleForm.hires == '企业主' || ruleForm.hires == '上班族' || ruleForm.hires == '个体户' || ruleForm.hires == '公务员')"
                 >
                   <el-form-item label="单位名称:" prop="unit">
-                    <el-input clearable v-model="ruleForm.unit" placeholder="请输入单位名称"></el-input>
+                    <el-input clearable  v-model="ruleForm.unit" placeholder="请输入单位名称"></el-input>
                   </el-form-item>
                   <el-form-item label="单位地址:" prop="unitadress">
-                    <el-input clearable v-model="ruleForm.unitadress" placeholder="请输入单位地址"></el-input>
+                    <el-input clearable  v-model="ruleForm.unitadress" placeholder="请输入单位地址"></el-input>
                   </el-form-item>
                   <el-form-item label="工作职级:" prop="unitposition">
-                    <el-input clearable v-model="ruleForm.unitposition" placeholder="请输入工作职级"></el-input>
+                    <el-input clearable  v-model="ruleForm.unitposition" placeholder="请输入工作职级"></el-input>
                   </el-form-item>
                   <el-form-item
                     :label="(ruleForm.hires == '企业主' || ruleForm.hires == '个体户')?'负责人电话:':'单位电话:'"
                     prop="unitphone"
                   >
-                    <el-input clearable v-model="ruleForm.unitphone" placeholder="请输入电话号码"></el-input>
+                    <el-input clearable  v-model="ruleForm.unitphone" placeholder="请输入电话号码"></el-input>
                   </el-form-item>
                   <el-form-item
                     v-if="ruleForm.hires != '企业主' && ruleForm.hires != '个体户'"
                     label="入职时间(月):"
                     prop="entrytime"
                   >
-                    <el-input clearable v-model="ruleForm.entrytime" placeholder="请输入时间(月)"></el-input>
+                    <el-input clearable  v-model="ruleForm.entrytime" placeholder="请输入时间(月)"></el-input>
                   </el-form-item>
                 </span>
                 <el-form-item label="月收入(元):" prop="revenue">
-                  <el-input clearable v-model="ruleForm.revenue" placeholder="请输入月收入(元)"></el-input>
+                  <el-input clearable  v-model="ruleForm.revenue" placeholder="请输入月收入(元)"></el-input>
                 </el-form-item>
                 <el-form-item label="是否有社保:" prop="social">
                   <el-select
@@ -184,7 +183,7 @@
                   label="社保年限(月):"
                   prop="socialyear"
                 >
-                  <el-input clearable v-model="ruleForm.socialyear" placeholder="请输入社保年限(月)"></el-input>
+                  <el-input clearable  v-model="ruleForm.socialyear" placeholder="请输入社保年限(月)"></el-input>
                 </el-form-item>
                 <el-form-item label="是否有公积金:" prop="provident">
                   <el-select
@@ -206,14 +205,14 @@
                   label="公积金年限(月):"
                   prop="proyears"
                 >
-                  <el-input clearable v-model="ruleForm.proyears" placeholder="请输入公积金年限(月)"></el-input>
+                  <el-input clearable  v-model="ruleForm.proyears" placeholder="请输入公积金年限(月)"></el-input>
                 </el-form-item>
                 <el-form-item
                   v-show="ruleForm.provident && ruleForm.provident !='无公积金'"
                   label="公积金基数:"
                   prop="probase"
                 >
-                  <el-input clearable v-model="ruleForm.probase" placeholder="请输入公积金基数"></el-input>
+                  <el-input clearable  v-model="ruleForm.probase" placeholder="请输入公积金基数"></el-input>
                 </el-form-item>
               </div>
             </el-collapse-item>
@@ -242,7 +241,7 @@
                       v-model="ruleForm.housetype"
                       placeholder="请选择"
                     >
-                      <el-option label="自建房" value="自建房"></el-option>
+                      <el-option label="商品房" value="商品房"></el-option>
                       <el-option label="商铺" value="商铺"></el-option>
                       <el-option label="公寓" value="公寓"></el-option>
                       <el-option label="安置房" value="安置房"></el-option>
@@ -250,16 +249,16 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="小区名称:" prop="housesname">
-                    <el-input clearable v-model="ruleForm.housesname" placeholder="请输入小区名称"></el-input>
+                    <el-input clearable  v-model="ruleForm.housesname" placeholder="请输入小区名称"></el-input>
                   </el-form-item>
                   <el-form-item label="坐落位置:" prop="houaddress">
-                    <el-input clearable v-model="ruleForm.houaddress" placeholder="请输入坐落位置"></el-input>
+                    <el-input clearable  v-model="ruleForm.houaddress" placeholder="请输入坐落位置"></el-input>
                   </el-form-item>
                   <el-form-item label="购买时间:" prop="housetime">
-                    <el-input clearable v-model="ruleForm.housetime" placeholder="请输入购买时间"></el-input>
+                    <el-input clearable  v-model="ruleForm.housetime" placeholder="请输入购买时间"></el-input>
                   </el-form-item>
                   <el-form-item label="产权面积:" prop="housearea">
-                    <el-input clearable v-model="ruleForm.housearea" placeholder="请输入产权面积"></el-input>
+                    <el-input clearable  v-model="ruleForm.housearea" placeholder="请输入产权面积"></el-input>
                   </el-form-item>
 
                   <el-form-item label="房屋状态:" prop="houpayment">
@@ -279,7 +278,7 @@
                     label="欠款金额:"
                     prop="houamount"
                   >
-                    <el-input clearable v-model="ruleForm.houamount" placeholder="请输入欠款金额"></el-input>
+                    <el-input clearable  v-model="ruleForm.houamount" placeholder="请输入欠款金额"></el-input>
                   </el-form-item>
                 </div>
               </div>
@@ -298,13 +297,13 @@
                 </el-form-item>
                 <div class="flex" v-if="ruleForm.car && ruleForm.car == '是'">
                   <el-form-item label="车辆品牌:" prop="carbrand">
-                    <el-input clearable v-model="ruleForm.carbrand" placeholder="请输入车辆品牌"></el-input>
+                    <el-input clearable  v-model="ruleForm.carbrand" placeholder="请输入车辆品牌"></el-input>
                   </el-form-item>
                   <el-form-item label="购车年限:" prop="caryear">
-                    <el-input clearable v-model="ruleForm.caryear" placeholder="请输入购车年限"></el-input>
+                    <el-input clearable  v-model="ruleForm.caryear" placeholder="请输入购车年限"></el-input>
                   </el-form-item>
                   <el-form-item label="现评估价格:" prop="carprice">
-                    <el-input clearable v-model="ruleForm.carprice" placeholder="请输入现评估价格"></el-input>
+                    <el-input clearable  v-model="ruleForm.carprice" placeholder="请输入现评估价格"></el-input>
                   </el-form-item>
                   <el-form-item label="车辆状态:" prop="carpayment">
                     <el-select
@@ -323,7 +322,7 @@
                     label="欠款金额:"
                     prop="carema"
                   >
-                    <el-input clearable v-model="ruleForm.carema" placeholder="请输入欠款金额"></el-input>
+                    <el-input clearable  v-model="ruleForm.carema" placeholder="请输入欠款金额"></el-input>
                   </el-form-item>
                 </div>
               </div>
@@ -347,7 +346,7 @@
                 </el-form-item>
                 <div class="flex" v-if="ruleForm.policy && ruleForm.policy=='是'">
                   <el-form-item label="投保公司名称:" prop="policyname">
-                    <el-input clearable v-model="ruleForm.policyname" placeholder="请输入投保公司名称"></el-input>
+                    <el-input clearable  v-model="ruleForm.policyname" placeholder="请输入投保公司名称"></el-input>
                   </el-form-item>
                   <el-form-item label="投保时间:" prop="policyear">
                     <el-select
@@ -376,7 +375,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="缴费金额:" prop="policypre">
-                    <el-input clearable v-model="ruleForm.policypre" placeholder="请输入缴费金额"></el-input>
+                    <el-input clearable  v-model="ruleForm.policypre" placeholder="请输入缴费金额"></el-input>
                   </el-form-item>
                 </div>
               </div>
@@ -676,7 +675,7 @@
             <el-collapse-item title="紧急联系人" name="9">
               <div class="flex">
                 <el-form-item label="第一联系人:" prop="contacts1">
-                  <el-input clearable v-model="ruleForm.contacts1" placeholder="请输入第一联系人姓名"></el-input>
+                  <el-input clearable  v-model="ruleForm.contacts1" placeholder="请输入第一联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat1">
                   <el-select
@@ -692,10 +691,10 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="联系人电话:" prop="conphone1">
-                  <el-input clearable v-model="ruleForm.conphone1" placeholder="请输入第一联系人电话"></el-input>
+                  <el-input clearable  v-model="ruleForm.conphone1" placeholder="请输入第一联系人电话"></el-input>
                 </el-form-item>
                 <el-form-item label="第二联系人:" prop="contacts2">
-                  <el-input clearable v-model="ruleForm.contacts2" placeholder="请输入第二联系人姓名"></el-input>
+                  <el-input clearable  v-model="ruleForm.contacts2" placeholder="请输入第二联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat2">
                   <el-select
@@ -711,10 +710,10 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="联系人电话:" prop="conphone2">
-                  <el-input clearable v-model="ruleForm.conphone2" placeholder="请输入第二联系人电话"></el-input>
+                  <el-input clearable  v-model="ruleForm.conphone2" placeholder="请输入第二联系人电话"></el-input>
                 </el-form-item>
                 <el-form-item label="第三联系人:" prop="contacts3">
-                  <el-input clearable v-model="ruleForm.contacts3" placeholder="请输入第三联系人姓名"></el-input>
+                  <el-input clearable  v-model="ruleForm.contacts3" placeholder="请输入第三联系人姓名"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人关系:" prop="conrelat3">
                   <el-select
@@ -730,10 +729,10 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="联系人电话:" prop="conphone3">
-                  <el-input clearable v-model="ruleForm.conphone3" placeholder="请输入第三联系人电话"></el-input>
+                  <el-input clearable  v-model="ruleForm.conphone3" placeholder="请输入第三联系人电话"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="第四联系人:" prop="contacts4">
-                  <el-input clearable 
+                  <el-input clearable  
                     v-model="ruleForm.contacts4"
                     placeholder="请输入第四联系人姓名"
                   ></el-input>
@@ -751,7 +750,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="联系人电话:" prop="conphone4">
-                  <el-input clearable 
+                  <el-input clearable  
                     v-model="ruleForm.conphone4"
                     placeholder="请输入第四联系人电话"
                   ></el-input>
@@ -839,8 +838,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="审批反馈:" prop="feedback">
-                  <el-input
-                    clearable
+                  <el-input clearable
                     type="textarea"
                     :rows="3"
                     v-model="ruleForm.feedback"
@@ -856,11 +854,11 @@
             >
               <div class="f18">
                 可贷笔数：
-                <span class="colorYellow">{{ruleForm.productList.length}}</span>
+                <span class="colorYellow">{{ruleForm.productList.length || 0}}</span>
               </div>
               <div class="f18">
                 最高可贷金额：
-                <span class="colorYellow">{{ruleForm.recomMony}}万元</span>
+                <span class="colorYellow">{{ruleForm.recomMony || 0}}万元</span>
               </div>
               <div class="flex mt10">
                 <el-tag
