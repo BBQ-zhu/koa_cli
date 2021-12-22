@@ -85,3 +85,18 @@ vue_cli中：全局替换
 审核经理改代办客服
 
 重新npm i
+          
+          
+1\vue_cli views/Rolies.vue 
+//角色切换事件
+    async collapse() {
+      await this.findRoleList()
+
+2\vue_cli\src\views\Works.vue
+注销全部客户下拉选项
+
+全局：
+月利息改成年利息
+邀约上面 改为邀约上门
+该用户今日已提交   该客户今日已被'+val.manager1+'提交
+关闭所有console
