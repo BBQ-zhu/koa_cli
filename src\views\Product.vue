@@ -22,8 +22,7 @@
           :value="item.name"
         ></el-option>
       </el-select>
-      <el-input
-        clearable
+      <el-input clearable
         placeholder="请输入内容"
         v-model="input"
         class="input-with-select findInput ml20"
@@ -48,7 +47,7 @@
           @click="(find.currentPage = 1), getNewsList()"
         ></el-button>
       </el-input>
-      <!-- <el-input clearable  placeholder="请输入产品名称" v-model="input" class="input-with-select findInput ml20">
+      <!-- <el-input clearable   placeholder="请输入产品名称" v-model="input" class="input-with-select findInput ml20">
         <el-button slot="append" icon="el-icon-search" @click="classType = 'name',getNewsList()"></el-button>
       </el-input>-->
     </div>
@@ -65,7 +64,7 @@
         >
           <div class="flex">
             <el-form-item label="产品名称:" prop="name">
-              <el-input clearable v-model="ruleForm.name" placeholder="请输入产品名称"></el-input>
+              <el-input clearable  v-model="ruleForm.name" placeholder="请输入产品名称"></el-input>
             </el-form-item>
             <el-form-item label="产品分类:" prop="type">
               <el-select clearable style="width: 100%" v-model="ruleForm.type" placeholder="请选择">
@@ -78,10 +77,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品价格:" prop="newprice">
-              <el-input clearable v-model="ruleForm.newprice" placeholder="请输入产品价格"></el-input>
+              <el-input clearable  v-model="ruleForm.newprice" placeholder="请输入产品价格"></el-input>
             </el-form-item>
             <el-form-item label="产品原价:" prop="oldprice">
-              <el-input clearable v-model="ruleForm.oldprice" placeholder="请输入产品原价格"></el-input>
+              <el-input clearable  v-model="ruleForm.oldprice" placeholder="请输入产品原价格"></el-input>
             </el-form-item>
             <el-form-item label="活动类型:" prop="recomtype">
               <el-select clearable v-model="ruleForm.recomtype" placeholder="请选择">
@@ -110,16 +109,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="总计咨询:" prop="consulting">
-              <el-input clearable v-model="ruleForm.consulting" placeholder="请输入总计咨询"></el-input>
+              <el-input clearable  v-model="ruleForm.consulting" placeholder="请输入总计咨询"></el-input>
             </el-form-item>
             <el-form-item label="总计销量:" prop="volume">
-              <el-input clearable v-model="ruleForm.volume" placeholder="请输入总计销量"></el-input>
+              <el-input clearable  v-model="ruleForm.volume" placeholder="请输入总计销量"></el-input>
             </el-form-item>
             <el-form-item label="总浏览量:" prop="totalview">
-              <el-input clearable v-model="ruleForm.totalview" placeholder="请输入总浏览量"></el-input>
+              <el-input clearable  v-model="ruleForm.totalview" placeholder="请输入总浏览量"></el-input>
             </el-form-item>
             <el-form-item label="产品描述:" prop="description">
-              <el-input clearable v-model="ruleForm.description" placeholder="请输入产品描述"></el-input>
+              <el-input clearable  v-model="ruleForm.description" placeholder="请输入产品描述"></el-input>
             </el-form-item>
             <el-form-item label="是否推荐:" prop="recommend">
               <el-select
@@ -135,7 +134,7 @@
 
             <el-form-item label="Logo:" prop="productlogo">
               <div style="position: relative">
-                <el-input clearable placeholder="请上传产品Logo" v-model="ruleForm.productlogo" disabled></el-input>
+                <el-input clearable  placeholder="请上传产品Logo" v-model="ruleForm.productlogo" disabled></el-input>
                 <el-upload
                   style="position: absolute; top: 3px; right: -35px"
                   class="upload-demo f20"
@@ -153,7 +152,7 @@
 
             <el-form-item label="图片:" prop="productimg">
               <div style="position: relative">
-                <el-input clearable placeholder="请上传产品图片" v-model="ruleForm.productimg" disabled></el-input>
+                <el-input clearable  placeholder="请上传产品图片" v-model="ruleForm.productimg" disabled></el-input>
                 <el-upload
                   style="position: absolute; top: 3px; right: -34px"
                   class="upload-demo f20"
@@ -191,22 +190,22 @@
                 >资质要求</div>
                 <span class="flex">
                   <el-form-item label="最低额度(万):" prop="minamount">
-                    <el-input clearable v-model="ruleForm.minamount" placeholder="请输入最低额度"></el-input>
+                    <el-input clearable  v-model="ruleForm.minamount" placeholder="请输入最低额度"></el-input>
                   </el-form-item>
                   <el-form-item label="最高额度(万):" prop="maxamount">
-                    <el-input clearable v-model="ruleForm.maxamount" placeholder="请输入最高额度"></el-input>
+                    <el-input clearable  v-model="ruleForm.maxamount" placeholder="请输入最高额度"></el-input>
                   </el-form-item>
                   <el-form-item label="最低贷款期限:" prop="minterm">
-                    <el-input clearable v-model="ruleForm.minterm" placeholder="请输入最低贷款期限(月)"></el-input>
+                    <el-input clearable  v-model="ruleForm.minterm" placeholder="请输入最低贷款期限(月)"></el-input>
                   </el-form-item>
                   <el-form-item label="最高贷款期限:" prop="maxterm">
-                    <el-input clearable v-model="ruleForm.maxterm" placeholder="请输入最高贷款期限(月)"></el-input>
+                    <el-input clearable  v-model="ruleForm.maxterm" placeholder="请输入最高贷款期限(月)"></el-input>
                   </el-form-item>
-                  <el-form-item label="月利息(%):" prop="interest">
-                    <el-input clearable v-model="ruleForm.interest" placeholder="请输入月利息"></el-input>
+                  <el-form-item label="年利息(%):" prop="interest">
+                    <el-input clearable  v-model="ruleForm.interest" placeholder="请输入年利息"></el-input>
                   </el-form-item>
                   <el-form-item label="放款时间(天):" prop="loandays">
-                    <el-input clearable v-model="ruleForm.loandays" placeholder="请输入放款时间"></el-input>
+                    <el-input clearable  v-model="ruleForm.loandays" placeholder="请输入放款时间"></el-input>
                   </el-form-item>
                   <el-form-item v-if="ruleForm.match.includes('address')" label="放款城市:" prop="address">
                     <el-cascader
@@ -216,10 +215,10 @@
                     ></el-cascader>
                   </el-form-item>
                   <el-form-item v-if="ruleForm.match.includes('age')" label="年龄要求:" prop="age">
-                    <el-input clearable v-model="ruleForm.age" placeholder="请输入多少岁以下"></el-input>
+                    <el-input clearable  v-model="ruleForm.age" placeholder="请输入多少岁以下"></el-input>
                   </el-form-item>
                   <el-form-item v-if="ruleForm.match.includes('revenue')" label="工资要求(元):" prop="revenue">
-                    <el-input clearable v-model="ruleForm.revenue" placeholder="输入多少月收入以上"></el-input>
+                    <el-input clearable  v-model="ruleForm.revenue" placeholder="输入多少月收入以上"></el-input>
                   </el-form-item>
                   <el-form-item v-if="ruleForm.match.includes('social')" label="社保情况:" prop="social">
                     <el-select clearable v-model="ruleForm.social" multiple placeholder="请选择">
@@ -567,10 +566,9 @@
                       v-for="(tag, index) in ruleForm.othercomponents"
                       closable
                       :disable-transitions="false"
-                      @close="handleClose(tag)"
+                      @close="handleCloseTag(tag)"
                     >{{ tag }}</el-tag>
-                    <el-input
-                      clearable
+                    <el-input clearable
                       class="input-new-tag"
                       v-if="otherVisible"
                       v-model="otherValue"
@@ -607,8 +605,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="其他资料:" prop="otherinformation" style="width: 100%">
-                    <el-input
-                      clearable
+                    <el-input clearable
                       style="width: 400%"
                       v-model="ruleForm.otherinformation"
                       placeholder="请输入其他所需资料"
@@ -691,14 +688,13 @@
           class="demo-ruleForm"
         >
           <el-form-item label="分类名称:" prop="name">
-            <el-input clearable v-model="iconForm.name" placeholder="请输入分类名称" class="new-input"></el-input>
+            <el-input clearable  v-model="iconForm.name" placeholder="请输入分类名称" class="new-input"></el-input>
           </el-form-item>
           <el-form-item label="分类描述:" prop="remaks">
-            <el-input clearable v-model="iconForm.remaks" placeholder="请输入分类描述" class="new-input"></el-input>
+            <el-input clearable  v-model="iconForm.remaks" placeholder="请输入分类描述" class="new-input"></el-input>
           </el-form-item>
           <el-form-item label="展示顺序:" prop="number">
-            <el-input
-              clearable
+            <el-input clearable
               v-model="iconForm.number"
               type="number"
               placeholder="展示顺序:数值越小越靠前"
@@ -718,8 +714,7 @@
           </el-form-item>
 
           <el-form-item label="图片:" prop="imgurl">
-            <el-input
-              clearable
+            <el-input clearable
               disabled
               v-model="iconForm.imgurl"
               placeholder="图片访问地址"
@@ -856,7 +851,7 @@ export default {
         maxamount: '', //最高额度
         minterm: '', //最低期限
         maxterm: '', //最高期限
-        interest: '', //月利息
+        interest: '', //年利息
         loandays: '', //放款天数
         address: [], //放款省市
         age: '', //n岁以下
@@ -935,7 +930,7 @@ export default {
     }
   },
   methods: {
-    handleClose(tag) {
+    handleCloseTag(tag) {
       this.ruleForm.othercomponents.splice(
         this.ruleForm.othercomponents.indexOf(tag),
         1
@@ -978,7 +973,7 @@ export default {
         maxamount: '', //最高额度
         minterm: '', //最低期限
         maxterm: '', //最高期限
-        interest: '', //月利息
+        interest: '', //年利息
         loandays: '', //放款天数
         address: [], //放款省市
         age: '', //n岁以下
@@ -1092,7 +1087,7 @@ export default {
     },
     //上传产品图片成功钩子
     async handSuccess(res, file, fileList) {
-      console.log(res.data)
+      //console.log(res.data)
       if (res.code == 200) {
         if (!this.isAdd) {
           let newArr = {
