@@ -62,36 +62,43 @@
           <el-tag
             :type="tagNowDate == '今日'?'danger':'info'"
             class="mr10 pointer"
-            @click="tagNowDate = '今日'"
+            @click="tagNowDate = '今日',getAllData()"
           >今日</el-tag>
           <el-tag
             :type="tagNowDate == '今月'?'danger':'info'"
             class="mr10 pointer"
-            @click="tagNowDate = '今月'"
+            @click="tagNowDate = '今月',getAllData()"
           >今月</el-tag>
           <el-tag
             :type="tagNowDate == '今年'?'danger':'info'"
             class="mr10 pointer"
-            @click="tagNowDate = '今年'"
+            @click="tagNowDate = '今年',getAllData()"
           >今年</el-tag>
           <el-tag
             :type="tagNowDate == '全部'?'danger':'info'"
             class="pointer"
-            @click="tagNowDate = '全部'"
+            @click="tagNowDate = '全部',getAllData()"
           >全部</el-tag>
         </div>
       </div>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="意向客户量" name="意向客户量">
-          <!-- <div id="main3" style="width: 100%;height:400px;"></div> -->
-        </el-tab-pane>
-        <el-tab-pane label="贷款客户量" name="贷款客户量">
-          <!-- <div id="main4" style="width: 100%;height:400px;"></div> -->
-        </el-tab-pane>
-        <el-tab-pane label="企业客户量" name="企业客户量">
-          <!-- <div id="main5" style="width: 100%;height:400px;"></div> -->
-        </el-tab-pane>
-      </el-tabs>
+      <div style="border-bottom: 1px solid #909399;padding-bottom:10px;">
+          <el-tag
+            :type="activeName == '意向客户量'?'success':'info'"
+            class="mr10 pointer"
+            @click="activeName = '意向客户量',getAllData()"
+          >意向客户量</el-tag>
+          <el-tag
+            :type="activeName == '贷款客户量'?'success':'info'"
+            class="mr10 pointer"
+            @click="activeName = '贷款客户量',getAllData()"
+          >贷款客户量</el-tag>
+          <el-tag
+            :type="activeName == '企业客户量'?'success':'info'"
+            class="mr10 pointer"
+            @click="activeName = '企业客户量',getAllData()"
+          >企业客户量</el-tag>
+        </div>
+        <div v-loading="loading" class="mt20" id="main3" style="width: 100%;height:400px;"></div>
     </div>
     <div class="card mt20">
       <div class="header flex">
@@ -147,6 +154,10 @@ export default {
     return {
       tagNowDate: '今日',
       activeName: '意向客户量',
+      allData:[],
+      allUser:[],
+      nearrLength:0,
+      loading:false,
       tableHeader: [
         { name: '员工姓名', prop: 'username' },
         { name: '员工ID', prop: 'uid' },
@@ -223,45 +234,105 @@ export default {
     },
     // 意向客户、贷款客户、企业客户统计
     async getAllData() {
+      this.loading = true
+      let date = `${new Date().getFullYear()}/${new Date().getMonth() +
+        1}/${new Date().getDate()}`
+      let time = ''
+      if (this.tagNowDate == '今日') {
+        time = date
+      } else if (this.tagNowDate == '今月') {
+        time = date.split('/')[0] + '/' + date.split('/')[1]
+      } else if (this.tagNowDate == '今年') {
+        time = date.split('/')[0]
+      } else if (this.tagNowDate == '全部') {
+        time = '2' //空格查询所有时间
+      }
       var data = {
         skip: 0,
         limit: 9999999999,
         category: '全部客户', //客户类别 我的客户、公海客户、全部客户
         classTypename: 'type',
-        classType: '意向客户' // 业务类别
+        classType: this.activeName != '企业客户量'?'意向客户' : '', // 业务类别
+        fuzz: 'time',
+        input: time
+        // uid: uid || ''
       }
-      this.$axios.post(this.$api.findIntegrate, data).then(res => {
-        let arr = res.data[0].data
-        this.chichData(arr)
+      let URL = ''
+      if (this.activeName == '意向客户量') {
+        URL = this.$api.findIntegrate
+      } else if (this.activeName == '贷款客户量') {
+        URL = this.$api.findCustomer
+      } else if (this.activeName == '企业客户量') {
+        URL = this.$api.findEnterprise
+      }
+      await this.$axios.post(URL, data).then(async res => {
+        if(res.code == 200){
+          let arr = res.data[0].data
+          let newarr = []
+          arr.map(item=>{
+            if(item.status !='草稿' && item.status){
+              newarr.push(item)
+            }
+          })
+          this.nearrLength = newarr.length
+          await this.chichData(newarr) // 计算分拆合成图表数据
+          this.loading = false
+        }else{
+          this.loading = false
+        }
+      }).catch(()=>{
+        this.loading = false
       })
     },
-    chichData(data) {
-      // tagNowDate:'今日', activeName:'意向客户量',
-      let nowdate = `${new Date().getFullYear()}/${new Date().getMonth() +
-        1}/${new Date().getDate()}`
-      if (this.tagNowDate == '今日') {
-        let obj = {}
-        for (let item of data) {
-          console.log(item.time.split(' ')[0])
-          if (item.time.split(' ')[0] == nowdate) {
-            if (obj[item.manager1]) obj[item.manager1]++
-            else obj[item.manager1] = 1
-          }
-        }
-        let arr1 = []
-        for (var o in obj) {
-          arr1.push({
-            el: o,
-            count: obj[o]
-          })
-        }
-        console.log(arr1)
-        console.log(this.getChaName('00056'))
+    // 计算分拆合成图表数据
+    chichData(arr) {
+      let obj = {}
+      for (let item of arr) {
+        let manager1 = `${this.getChaName(item.manager1)||item.manager1}(${item.manager1})` //工号反查
+        if (obj[manager1]) obj[manager1]++
+        else obj[manager1] = 1
       }
-    },
-    // 统计类别切换
-    handleClick(tab, event) {
-      console.log(this.activeName)
+      let arr1 = []
+      for (var o in obj) {
+        arr1.push({
+          el: o,
+          count: obj[o]
+        })
+      }
+      let arr2 = this.$common.bubbleSort(arr1, 'count').reverse() //对象排序 //倒叙排列
+      this.allData = []
+      this.allUser = []
+      for(let item of arr2){
+        this.allData.push(item.count)
+        this.allUser.push(item.el)
+      }
+      //客户数据提交量统计
+      var myChart3 = echarts.init(document.getElementById('main3'))
+      myChart3.setOption({
+        color:'#ff6600',
+        title: {
+          text: '数据提交量统计:共'+this.nearrLength+'个'
+        },
+        tooltip: {},
+        xAxis: {
+          data: this.allUser,
+          axisLabel:{ // 竖向排列名称
+            interval:0,
+            formatter:function(val){
+              let name = val.split('(')[0].split('')
+              return  name.join('\n')
+            }
+          }
+        },
+        yAxis: {},
+        series: [
+          {
+            name: '提交量',
+            type: 'bar',
+            data: this.allData
+          }
+        ]
+      })
     },
     // 图表初始化
     echart() {
@@ -313,46 +384,14 @@ export default {
           }
         ]
       })
-      //客户数据提交量统计
-      var myChart3 = echarts.init(document.getElementById('main3'))
-      myChart3.setOption({
-        title: {
-          text: '客户数据提交量统计'
-        },
-        tooltip: {},
-        xAxis: {
-          data: [
-            '1月',
-            '2月',
-            '3月',
-            '4月',
-            '5月',
-            '6月',
-            '7月',
-            '8月',
-            '9月',
-            '10月',
-            '11月',
-            '12月'
-          ]
-        },
-        yAxis: {},
-        series: [
-          {
-            name: '访问量',
-            type: 'bar',
-            data: this.monthlist
-          }
-        ]
-      })
     },
     //反查员工中文名
-    getChaName(uid){
-      let name=''
-      for(let item of this.userList){
-        if(item.uid == uid){
+    getChaName(uid) {
+      let name = ''
+      for (let item of this.userList) {
+        if (item.uid == uid) {
           name = item.username
-          break;
+          break
         }
       }
       return name
@@ -435,15 +474,15 @@ export default {
       let obj = { month: 0, year: 0, all: 0 }
       let nowTieme = `${new Date().getFullYear()}/${new Date().getMonth() +
         1}/${new Date().getDate()}`.split('/')
+        //console.log(arr)
       arr.map(item => {
-        // let time = item.time.split(" ")[0].split("/"); // 用户签字时间
-        let time = item.startime.split('-') // 合同起始时间
+        let time = item.time.split('/') // 合同起始时间
         let exp = parseInt(item.expenses) || 0
         obj.all += exp
-        if (nowTieme[0] == parseInt(time[0])) {
+        if (nowTieme[0] == time[0]) { //年
           obj.year += exp
         }
-        if (nowTieme[1] == parseInt(time[1])) {
+        if (nowTieme[0] == time[0] && nowTieme[1] == time[1]) { //月
           obj.month += exp
         }
       })
