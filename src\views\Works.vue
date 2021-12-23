@@ -182,15 +182,16 @@
               </el-form-item>
             </el-tooltip>
             <el-tooltip
+              v-if="userInfo.uid=='00000'"
               effect="dark"
               content="是否有权查看综合服务、贷款客户、企业客户中的全部客户数据"
               placement="top"
             >
-              <el-form-item label="全部客户:" prop="seeall">
+              <el-form-item label="全部客户:" prop="seeall" color="red">
                 <el-select
                   clearable
                   style="width: 217px"
-                  v-model="ruleForm.seedata"
+                  v-model="ruleForm.seeall"
                   placeholder="是否开启权限"
                 >
                   <el-option label="是" value="是"></el-option>
@@ -237,6 +238,7 @@ export default {
   },
   data() {
     return {
+      userInfo:{},
       showUE: false,
       uploadHeader: {
         authorization: JSON.parse(sessionStorage.getItem('userInfo') || '{}')
@@ -288,9 +290,7 @@ export default {
         time: ''
       },
       rules: {
-        username: [
-          { required: true, message: '请输入员工姓名', trigger: 'blur' }
-        ],
+        username: [{ required: true, message: '请输入员工姓名', trigger: 'blur' }],
         role: [{ required: true, message: '请选择员工角色', trigger: 'blur' }],
         phone: [{ required: true, message: '请输入员工电话', trigger: 'blur' }],
         team: [{ required: true, message: '请选择团队', trigger: 'blur' }]
@@ -299,6 +299,7 @@ export default {
   },
   mounted() {
     this.mixinMethod(this.$route.path)
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
     this.getUserList()
     this.findRoleList()
     this.findteam()
@@ -330,7 +331,7 @@ export default {
       }
       this.$axios.post(this.$api.findUser, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = res.data[0].total[0].total || 0
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
     },
     //查询角色列表
@@ -354,7 +355,7 @@ export default {
       }
       this.$axios.post(this.$api.findUser, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = res.data[0].total ? res.data[0].total[0].total : 0
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
     },
     newPwd(index, row) {
