@@ -13,7 +13,6 @@
         class="ml20"
         v-model="selectInput"
         placeholder="请选择产品类型"
-        @change="(classType = 'type'), findClass()"
       >
         <el-option
           v-for="item in dynamicTags"
@@ -1120,31 +1119,18 @@ export default {
       this.find.currentPage = val
       this.getNewsList()
     },
-    async findClass() {
-      var data = {
-        skip: this.find.limit * (this.find.currentPage - 1),
-        limit: this.find.limit,
-        fuzz: this.classType,
-        input: this.selectInput
-      }
-      await this.$axios.post(this.$api.findProduct, data).then(res => {
-        this.tableData = res.data[0].data
-        this.find.total = res.data[0].total[0].total
-      })
-      this.input = ''
-    },
     async getNewsList() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
+        selectInput:this.selectInput,
         fuzz: this.classType,
         input: this.input
       }
       await this.$axios.post(this.$api.findProduct, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = res.data[0].total[0].total
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
-      this.selectInput = ''
     },
     //编辑按钮
     editRow(index, row) {
