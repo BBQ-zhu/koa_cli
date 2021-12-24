@@ -235,8 +235,7 @@ export default {
     // 意向客户、贷款客户、企业客户统计
     async getAllData() {
       this.loading = true
-      let date = `${new Date().getFullYear()}/${new Date().getMonth() +
-        1}/${new Date().getDate()}`
+      let date = this.$common.dateTime()
       let time = ''
       if (this.tagNowDate == '今日') {
         time = date
@@ -245,7 +244,7 @@ export default {
       } else if (this.tagNowDate == '今年') {
         time = date.split('/')[0]
       } else if (this.tagNowDate == '全部') {
-        time = '2' //空格查询所有时间
+        time = '2' //空格查询所有时间 2021
       }
       var data = {
         skip: 0,
@@ -472,9 +471,7 @@ export default {
     //根据合同列表分时间段统计业绩
     statistics(arr) {
       let obj = { month: 0, year: 0, all: 0 }
-      let nowTieme = `${new Date().getFullYear()}/${new Date().getMonth() +
-        1}/${new Date().getDate()}`.split('/')
-        //console.log(arr)
+      let nowTieme = this.$common.dateTime().split('/')
       arr.map(item => {
         let time = item.time.split('/') // 合同起始时间
         let exp = parseInt(item.expenses) || 0
