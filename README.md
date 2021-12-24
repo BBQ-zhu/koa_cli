@@ -75,28 +75,50 @@ loan上传限制了，新增了一个文件用来保存js以下的代码
 src\pages\loan\loan2.vue
 移动前端index.html文件删除客服代码
 
+-----------------------------------------------------------------------------------------------
 
-
-vue_cli中：全局替换
-<el-input 替换为
-<el-input clearable 
-
-所有权证经理改金融客服
-审核经理改代办客服
-
-重新npm i
-          
-          
-1\vue_cli views/Rolies.vue 
-//角色切换事件
-    async collapse() {
-      await this.findRoleList()
-
-2\vue_cli\src\views\Works.vue
-注销全部客户下拉选项
-
+uniapp:
 全局：
-月利息改成年利息
-邀约上面 改为邀约上门
-该用户今日已提交   该客户今日已被'+val.manager1+'提交
-关闭所有console
+客户签名改为：甲方签名
+公司盖章改为：乙方盖章
+src\pages\sign\sign.vue
+src\common\js\common.js //新增时间函数
+src\pages\loan\loan.vue
+src\pages\enterprise\enterprise.vue
+全局替换：
+// let time = `${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`
+ let time = this.$commonJS.dateTime()
+
+vue_cli
+新增了合同签约
+package.json
+src\views\Contract.vue
+搜索：getFullYear()
+src\assets\js\common.js
+src\views\Statistics.vue
+
+koa
+config\error.js       //新增时间函数
+controller\datatime.js    //新增文件
+app.js
+
+models\product.js    98行Product大写
+全局替换
+const {
+    return200,
+    return500
+}
+const {
+    return200,
+    return500,
+    dateTime
+}
+
+data.time = `${new Date().getFullYear()}/${new Date().getMonth() +
+        1}/${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+
+data.time = dateTime()
+
+app.js中19行增加如下代码 用完记得删除
+const {datas} = require('./controller/datatime') //刷新时间脚本
+datas()
