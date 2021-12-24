@@ -41,7 +41,7 @@ const download = (src, filName) => {
         let url = window.URL.createObjectURL(x.response)
         let a = document.createElement('a')
         a.href = url
-        console.log(url)
+        //console.log(url)
         a.download = filName
         a.click()
     }
@@ -88,6 +88,18 @@ const moneyFormat = (val, none = '') => {
         }
     }
 }
+const dateTime =()=>{
+    let date = new Date() 
+    let Year = date.getFullYear()
+    let Month = date.getMonth()+1>=10 ? date.getMonth()+1 : '0' + (date.getMonth()+1)
+    let Day = date.getDate()>=10 ? date.getDate() : '0' + date.getDate()
+    // let Hours = date.getHours()>=10 ? date.getHours() : '0' + date.getHours()
+    // let Minutes = date.getMinutes()>=10 ? date.getMinutes() : '0' + date.getMinutes()
+    // let Seconds = date.getSeconds()>=10 ? date.getSeconds() : '0' + date.getSeconds()
+    // let time = `${Year}/${Month}/${Day} ${Hours}:${Minutes}:${Seconds}`
+    let time = `${Year}/${Month}/${Day}`
+    return time
+}
 
 module.exports = {
     clone,
@@ -95,5 +107,6 @@ module.exports = {
     bubbleSort,
     phoneNum,
     compare,
-    moneyFormat
+    moneyFormat,
+    dateTime
 }
