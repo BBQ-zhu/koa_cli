@@ -61,8 +61,8 @@
                 <el-form-item label="客户年龄:" prop="age">
                   <el-input clearable  v-model="ruleForm.age" placeholder="请输入客户年龄"></el-input>
                 </el-form-item>
-                <el-form-item label="需求资金(万):" prop="fund">
-                  <el-input clearable  v-model="ruleForm.fund" placeholder="请输入需求资金(万)"></el-input>
+                <el-form-item label="需求资金(元):" prop="fund">
+                  <el-input clearable  v-model="ruleForm.fund" placeholder="请输入需求资金(元)"></el-input>
                 </el-form-item>
                 <el-form-item label="资金用途:" prop="utility">
                   <el-input clearable  v-model="ruleForm.utility" placeholder="请输入资金用途"></el-input>
@@ -852,11 +852,11 @@
               title="匹配产品"
               name="11"
             >
-              <div class="f18">
+              <div class="f18 fw600">
                 可贷笔数：
                 <span class="colorYellow">{{ruleForm.productList.length || 0}}</span>
               </div>
-              <div class="f18">
+              <div class="f18 fw600">
                 最高可贷金额：
                 <span class="colorYellow">{{ruleForm.recomMony || 0}}万元</span>
               </div>
@@ -880,6 +880,11 @@
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
+      <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
       <el-table-column
         v-for="(item, index) in tableHeader"
         :key="index"
@@ -1081,7 +1086,8 @@ export default {
         { name: '客户经理', prop: 'manager1' },
         { name: '客服经理', prop: 'manager2' },
         { name: '审核状态', prop: 'status' },
-        { name: '创建时间', prop: 'time' }
+        { name: '更新时间', prop: 'time' },
+        { name: '跟进时间', prop: 'schedate' }
       ],
       find: {
         currentPage: 1, //当前页码
@@ -1170,7 +1176,7 @@ export default {
       }
       this.$axios.post(this.$api.findCustomer, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = ((res.data[0] || {}).total[0] || {}).total || 0
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
     },
     //领取按钮
@@ -1254,6 +1260,7 @@ export default {
               this.ruleForm.hires &&
               this.ruleForm.hires != '自由职业' &&
               this.ruleForm.hires != '无固定职业' &&
+              this.ruleForm.unitphone &&
               !/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.unitphone)
             ) {
               this.$message.error('请输入正确单位/负责人电话')
@@ -1300,10 +1307,54 @@ export default {
             this.$message.success('操作成功')
             this.dialogVisible = false
             this.getNewsList()
+            if(this.ruleForm.status == '审核结束'){
+              this.$confirm('是否同步该客户资料至综合服务-意向客户-公海客户中？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(async () => {
+                this.toIntegrate() //同步意向客户
+              })
+            }
           }
+
         } else {
           this.$message.error('请完善必填字段')
           return false
+        }
+      })
+    },
+    //将客户信息发送至意向客户-公海客户中
+    async toIntegrate(){
+      let dataForm = {
+        type: '意向客户',
+        proname: '金融客户', // 产品类型
+        name: this.ruleForm.name, //客户姓名
+        phone: this.ruleForm.phone, //客户姓名
+        manager1: '', //客户经理
+        manager2: '', //客服经理
+        hires: this.ruleForm.hires, //职业类型
+        social: this.ruleForm.social, //社保情况
+        provident: this.ruleForm.provident, //公积金情况
+        houses: this.ruleForm.houses, //房屋情况
+        car: this.ruleForm.car, //车辆情况
+        policy: this.ruleForm.policy, //保险情况
+        sesame: this.ruleForm.sesame, //芝麻分
+        microcredit: this.ruleForm.microcredit, //微粒贷
+        credit: this.ruleForm.credit, //信用卡
+        tobacco: this.ruleForm.tobacco, //是否有烟草证
+        comtype: '', //企业客户类型 公司注册、代理记账、商标注册、其他服务
+        othercomtype: '', //其他服务补充
+        vipstatus: '新客户', //客户状态 新客户、正在跟进、邀约上门、上门签单、办理成功、拒绝客户、放弃客户
+        status: '待审核', //审核状态 草稿、待审核、审核中、驳回、拒绝、通过、审核结束
+        feedback: this.ruleForm.feedback, //审批反馈
+        schedate:0,
+        remarks: this.ruleForm.remarks,
+        time: ''
+      }
+      await this.$axios.post(this.$api.createIntegrate, dataForm).then(res=>{
+        if(res.code == 200){
+          this.$message.success('意向客户添加成功！')
         }
       })
     }
