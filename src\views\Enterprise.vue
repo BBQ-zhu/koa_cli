@@ -12,7 +12,7 @@
         <el-option label="我的客户" value="我的客户"></el-option>
         <el-option label="公海客户" value="公海客户"></el-option>
         <el-option
-          v-if="userInfo && userInfo.seedata && userInfo.seedata=='是'"
+          v-if="userInfo && userInfo.seeall && userInfo.seeall=='是'"
           label="全部客户"
           value="全部客户"
         ></el-option>
@@ -29,8 +29,7 @@
         <el-option label="网站建设" value="网站建设"></el-option>
         <el-option label="其他服务" value="其他服务"></el-option>
       </el-select>
-      <el-input
-        clearable
+      <el-input clearable
         placeholder="请输入内容"
         v-model="input"
         class="input-with-select findInput ml20"
@@ -80,22 +79,22 @@
               </el-select>
             </el-form-item>
             <el-form-item label="企业名称:" prop="entername">
-              <el-input clearable v-model="ruleForm.entername" placeholder="请输入企业名称"></el-input>
+              <el-input clearable  v-model="ruleForm.entername" placeholder="请输入企业名称"></el-input>
             </el-form-item>
             <el-form-item label="负责人姓名:" prop="name">
-              <el-input clearable v-model="ruleForm.name" placeholder="请输入负责人姓名"></el-input>
+              <el-input clearable  v-model="ruleForm.name" placeholder="请输入负责人姓名"></el-input>
             </el-form-item>
             <el-form-item label="负责人电话:" prop="phone">
-              <el-input clearable v-model="ruleForm.phone" placeholder="请输入负责人电话"></el-input>
+              <el-input clearable  v-model="ruleForm.phone" placeholder="请输入负责人电话"></el-input>
             </el-form-item>
             <el-form-item label="身份证号:" prop="idcard">
-              <el-input clearable v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
+              <el-input clearable  v-model="ruleForm.idcard" placeholder="请输入身份证号"></el-input>
             </el-form-item>
             <el-form-item label="法人姓名:" prop="gener">
-              <el-input clearable v-model="ruleForm.gener" placeholder="请输入法人姓名"></el-input>
+              <el-input clearable  v-model="ruleForm.gener" placeholder="请输入法人姓名"></el-input>
             </el-form-item>
             <el-form-item label="主营业务:" prop="main">
-              <el-input clearable v-model="ruleForm.main" placeholder="请输入主营业务"></el-input>
+              <el-input clearable  v-model="ruleForm.main" placeholder="请输入主营业务"></el-input>
             </el-form-item>
             <el-form-item label="归属团队:" prop="hometeam">
               <el-select
@@ -128,7 +127,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="金融客服:" prop="manager2">
+            <el-form-item label="客服经理:" prop="manager2">
               <el-select
                 clearable
                 style="width:100%"
@@ -176,8 +175,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="审批反馈:" prop="feedback">
-              <el-input
-                clearable
+              <el-input clearable
                 type="textarea"
                 :rows="3"
                 v-model="ruleForm.feedback"
@@ -195,6 +193,11 @@
       </div>
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
+      <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
       <el-table-column
         v-for="(item, index) in tableHeader"
         :key="index"
@@ -298,7 +301,7 @@ export default {
         accout: '', //天府通账号
         hometeam: '', //归属团队
         manager1: '', //客户经理
-        manager2: '', //金融客服
+        manager2: '', //客服经理
         manager3: '', //代办客服
         status: '草稿', //审核状态 草稿、待审核、审核中、驳回、拒绝、通过、审核结束
         remarks: '', //备注
@@ -331,9 +334,10 @@ export default {
         { name: '负责人姓名', prop: 'name' },
         { name: '负责人电话', prop: 'phone' },
         { name: '客户经理', prop: 'manager1' },
-        { name: '金融客服', prop: 'manager2' },
+        { name: '客服经理', prop: 'manager2' },
         { name: '审核状态', prop: 'status' },
-        { name: '创建时间', prop: 'time' }
+        { name: '更新时间', prop: 'time' },
+        { name: '跟进时间', prop: 'schedate' },
       ],
       find: {
         currentPage: 1, //当前页码
@@ -417,7 +421,7 @@ export default {
       }
       this.$axios.post(this.$api.findEnterprise, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = ((res.data[0] || {}).total[0] || {}).total || 0
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
     },
     //领取按钮
@@ -490,7 +494,7 @@ export default {
       //提交
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          if (!/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.phone)) {
+          if (!/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.phone)) {
             this.$message.error('请输入正确手机号')
             return
           }
@@ -527,9 +531,52 @@ export default {
             this.$message.success('操作成功')
             this.dialogVisible = false
             this.getNewsList()
+            if(this.ruleForm.status == '审核结束'){
+              this.$confirm('是否同步该客户资料至综合服务-意向客户-公海客户中？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(async () => {
+                this.toIntegrate() //同步意向客户
+              })
+            }
           }
         } else {
           return false
+        }
+      })
+    },
+        //将客户信息发送至意向客户-公海客户中
+    async toIntegrate(){
+      let dataForm = {
+        type: '意向客户',
+        proname: '企业客户', // 产品类型
+        name: this.ruleForm.name, //客户姓名
+        phone: this.ruleForm.phone, //客户姓名
+        manager1: '', //客户经理
+        manager2: '', //客服经理
+        hires: '', //职业类型
+        social: '', //社保情况
+        provident: '', //公积金情况
+        houses: '', //房屋情况
+        car: '', //车辆情况
+        policy: '', //保险情况
+        sesame: '', //芝麻分
+        microcredit: '', //微粒贷
+        credit: '', //信用卡
+        tobacco: '', //是否有烟草证
+        comtype: this.ruleForm.type, //企业客户类型 公司注册、代理记账、商标注册、其他服务
+        othercomtype: '', //其他服务补充
+        vipstatus: '新客户', //客户状态 新客户、正在跟进、邀约上门、上门签单、办理成功、拒绝客户、放弃客户
+        status: '待审核', //审核状态 草稿、待审核、审核中、驳回、拒绝、通过、审核结束
+        feedback: this.ruleForm.feedback, //审批反馈
+        schedate:0,
+        remarks: this.ruleForm.remarks,
+        time: ''
+      }
+      await this.$axios.post(this.$api.createIntegrate, dataForm).then(res=>{
+        if(res.code == 200){
+          this.$message.success('意向客户添加成功！')
         }
       })
     }
