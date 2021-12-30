@@ -55,7 +55,7 @@
     </div>
 
     <!-- 客户数据图表 -->
-    <div class="card mt20">
+    <div class="card mt20" v-if="userInfo.uid == '00000' || userInfo.team == '铸力内勤'">
       <div class="flexBetween">
         <div></div>
         <div>
@@ -102,7 +102,7 @@
     </div>
     <div class="card mt20">
       <div class="header flex">
-        <div class="f16 fw600 ml10">个人业绩</div>
+        <div class="f16 fw600 ml10">{{userInfo.team}}个人业绩</div>
         <span class="f12 color2" style="padding-top: 3px">（点击表头三角符号实现排序）</span>
       </div>
       <el-table
@@ -111,6 +111,11 @@
         height="350"
         :default-sort="{ prop: 'all', order: 'descending' }"
       >
+      <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
         <el-table-column
           sortable
           v-for="(item, index) in tableHeader"
@@ -124,8 +129,8 @@
     </div>
     <div class="card mt20 mb20">
       <div class="header flex">
-        <div class="f16 fw600 ml10">团队业绩</div>
-        <span class="f12 color2" style="padding-top: 3px">（仅展示使用中团队的业绩）</span>
+        <div class="f16 fw600 ml10">{{userInfo.team}}业绩</div>
+        <span class="f12 color2" style="padding-top: 3px">（仅展示所在团队的业绩）</span>
       </div>
       <el-table
         :data="teamData"
@@ -133,6 +138,11 @@
         height="350"
         :default-sort="{ prop: 'all', order: 'descending' }"
       >
+      <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
         <el-table-column
           sortable
           v-for="(item, index) in teamHeader"
@@ -152,6 +162,7 @@ var echarts = require('echarts')
 export default {
   data() {
     return {
+      userInfo:{},
       tagNowDate: '今日',
       activeName: '意向客户量',
       allData:[],
@@ -188,12 +199,15 @@ export default {
   },
   async mounted() {
     this.mixinMethod(this.$route.path)
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
     await this.getContractList() //合同列表
     await this.getVipUserList() //vip用户量
     await this.getUserList() //员工列表
     await this.getProductList() // 产品数量和热度统计
     await this.statistic() //访问量统计
-    await this.getAllData() // 意向客户、贷款客户、企业客户统计
+    if(this.userInfo.uid == '00000' || this.userInfo.team == '铸力内勤'){
+      await this.getAllData() // 意向客户、贷款客户、企业客户统计
+    }
     await this.echart() // 图表初始化
   },
   methods: {
@@ -406,11 +420,13 @@ export default {
         this.vipUser = (res.data[0].total[0] || {}).total || 0
       }
     },
-    //获取员工用户列表
+    //获取员工用户列表 
     async getUserList() {
       var data = {
         skip: 0,
-        limit: 9999999
+        limit: 9999999,
+        fuzz:'team',
+        input:this.userInfo.team
       }
       let res = await this.$axios.post(this.$api.findUser, data)
       if (res.code == 200) {
