@@ -7,7 +7,6 @@
         class="ml20"
         v-model="selectInput"
         placeholder="请选择合同类型"
-        @change="(classType = 'type'), findClass()"
       >
         <el-option
           v-for="item in dynamicTags"
@@ -253,6 +252,11 @@
     </div>
     <!-- 表格区域 -->
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
+      <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
       <el-table-column label="客户签名" min-width="100px">
         <template slot-scope="scope">
           <el-tooltip placement="right">
@@ -303,11 +307,11 @@
             type="text"
             size="small"
           >删除</el-button>
-          <!-- <el-button
+          <el-button
             @click.native.prevent="(dialogVisible2 = true), (contractDetail = scope.row)"
             type="text"
             size="small"
-          >预览</el-button> -->
+          >预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -506,7 +510,7 @@ export default {
         })
         let contractImg = canvas.toDataURL('image/jpeg', 1) //base64文件 1为质量
         if (type == 'jpg') {
-          await this.downloadFile(contractImg,`电子合同_${this.contractDetail.name}_${this.contractDetail.time.split(' ')[0]}`)
+          await this.downloadFile(contractImg,`铸力电子合同_${this.contractDetail.name}_${this.contractDetail.time.split(' ')[0]}`)
         } else {
           var contentWidth = canvas.width
           var contentHeight = canvas.height
@@ -541,7 +545,7 @@ export default {
         }
         await this.$logsImg.createlogsImg(
           'api/downLoad',
-          '下载了合同' + type + '版本'
+          '下载了客户:（'+this.contractDetail.name+'-'+this.contractDetail.phone+'）合同' + type + '版本'
         ) //添加操作日志
         this.loadingShow = false
         this.$message.success('下载成功!')
@@ -549,22 +553,22 @@ export default {
       }, 1000)
     },
     // base64下载为图片
-    downloadFileByBase64(base64, name) {
-      var myBlob = this.dataURLtoBlob(base64)
-      var myUrl = URL.createObjectURL(myBlob)
-      this.downloadFile(myUrl, name)
-    },
-    dataURLtoBlob(dataurl) {
-      var arr = dataurl.split(','),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n)
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
-      }
-      return new Blob([u8arr], { type: mime })
-    },
+    // downloadFileByBase64(base64, name) {
+    //   var myBlob = this.dataURLtoBlob(base64)
+    //   var myUrl = URL.createObjectURL(myBlob)
+    //   this.downloadFile(myUrl, name)
+    // },
+    // dataURLtoBlob(dataurl) {
+    //   var arr = dataurl.split(','),
+    //     mime = arr[0].match(/:(.*?);/)[1],
+    //     bstr = atob(arr[1]),
+    //     n = bstr.length,
+    //     u8arr = new Uint8Array(n)
+    //   while (n--) {
+    //     u8arr[n] = bstr.charCodeAt(n)
+    //   }
+    //   return new Blob([u8arr], { type: mime })
+    // },
 
     downloadFile(url, name = '服务协议') {
       var a = document.createElement('a')
@@ -731,23 +735,11 @@ export default {
       this.find.currentPage = val
       this.getNewsList()
     },
-    async findClass() {
-      var data = {
-        skip: this.find.limit * (this.find.currentPage - 1),
-        limit: this.find.limit,
-        fuzz: this.classType,
-        input: this.selectInput
-      }
-      await this.$axios.post(this.$api.findContract, data).then(res => {
-        this.tableData = res.data[0].data
-        this.find.total = (res.data[0].total[0] || {}).total || 0
-      })
-      this.input = ''
-    },
     async getNewsList() {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
+        type:this.selectInput,
         fuzz: this.classType,
         input: this.input
       }
@@ -755,7 +747,6 @@ export default {
         this.tableData = res.data[0].data
         this.find.total = (res.data[0].total[0] || {}).total || 0
       })
-      this.selectInput = ''
     },
     //编辑按钮
     async editRow(index, row) {
