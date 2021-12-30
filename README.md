@@ -76,45 +76,67 @@ src\pages\loan\loan2.vue
 移动前端index.html文件删除客服代码
 
 -----------------------------------------------------------------------------------------------
-检查一下邀约上面改为邀约上门
-uniapp:
-全局：
-客户签名改为：甲方签名
-公司盖章改为：乙方盖章
-src\pages\sign\sign.vue
-src\common\js\common.js //新增时间函数
-src\pages\loan\loan.vue
-src\pages\enterprise\enterprise.vue
-全局替换：
-// let time = `${new Date().getFullYear()}/${new Date().getMonth()+1}/${new Date().getDate()}`
- let time = this.$commonJS.dateTime()
+@@一：vue_cli
+src\assets\js\fixedInfo.js  //vipstatusList 加一个 空号 字段
+需求资金(万)——需求资金(元)
 
-vue_cli
-新增了合同签约
-package.json
-src\views\Contract.vue
-搜索：getFullYear()
-src\assets\js\common.js
-src\views\Statistics.vue
+全局给表格添加序号
+搜索：<el-table
 
-koa
-config\error.js       //新增时间函数
-controller\datatime.js    //新增文件
-app.js
+<el-table-column
+          label="序号"
+          type="index"
+          width="50">
+</el-table-column>
 
-models\product.js    98行Product大写
-全局替换
-const {
-    return200,
-    return500
-}
-const {
-    return200,
-    return500,
-    dateTime
-}
+@@二：uniapp_cli
+需求资金(万)——需求资金(元)
 
-data.time = `${new Date().getFullYear()}/${new Date().getMonth() +
+
+@@三：koa_cli
+config\index.js  //数据库地址更换回来本地  localhost
+controller\schedule.js //定时任务去重修改
+routes\customer.js //添加了跟进时间的查询判断
+routes\contract.js //合同查询加了分类
+routes\integrate.js
+全局搜索：更新接口/updata  /update两个接口前缀，然后将以下文件中添加data.time = dateTime()
+C:\Users\zWX990233\Desktop\2021-12-21\新建文件夹\koa\routes\mortgages.js
+C:\Users\zWX990233\Desktop\2021-12-21\新建文件夹\koa\routes\internal.js
+C:\Users\zWX990233\Desktop\2021-12-21\新建文件夹\koa\routes\integrate.js
+C:\Users\zWX990233\Desktop\2021-12-21\新建文件夹\koa\routes\customer.js
+C:\Users\zWX990233\Desktop\2021-12-21\新建文件夹\koa\routes\product.js
+
+
+数据迁移：
+controller\dataMigration.js //新增数据迁移文件
+
+app.js文件加入
+// 报备客户导入测试
+const {dataMig1,dataMig2} = require('./controller/dataMigration') 
+// dataMig1()
+// dataMig2()
+
+将数据json文件改为js文件
+controller\tbbaobeis.js
+const dataChange1 = JSON.stringify([])
+module.exports = dataChange1 
+
+controller\tbslbs.js
+const dataChange2 = JSON.stringify([])
+module.exports = dataChange2 
+
+
+@@四：vue_pc
+
+
+
+开发情况：
+
+表格前面加序列号，修改之后的数据数据时间放到前面
+
+
+
+
         1}/${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
 
 data.time = dateTime()
