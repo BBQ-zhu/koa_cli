@@ -17,7 +17,7 @@
         <el-option label="我的客户" value="我的客户"></el-option>
         <el-option label="公海客户" value="公海客户"></el-option>
         <el-option
-          v-if="userInfo && userInfo.seedata && userInfo.seedata=='是'"
+          v-if="userInfo && userInfo.seeall && userInfo.seeall=='是'"
           label="全部客户"
           value="全部客户"
         ></el-option>
@@ -102,7 +102,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="金融客服:" prop="manager2">
+            <!-- <el-form-item label="客服经理:" prop="manager2">
               <el-select
                 clearable
                 style="width:100%"
@@ -297,9 +297,15 @@
                   v-model="ruleForm.comtype"
                   placeholder="请选择"
                 >
-                  <el-option label="公司注册" value="公司注册"></el-option>
                   <el-option label="代理记账" value="代理记账"></el-option>
+                  <el-option label="企业注册" value="企业注册"></el-option>
                   <el-option label="商标注册" value="商标注册"></el-option>
+                  <el-option label="公司变更" value="公司变更"></el-option>
+                  <el-option label="公司注销" value="公司注销"></el-option>
+                  <el-option label="许可证办理" value="许可证办理"></el-option>
+                  <el-option label="道路运输" value="道路运输"></el-option>
+                  <el-option label="建筑资质" value="建筑资质"></el-option>
+                  <el-option label="网站建设" value="网站建设"></el-option>
                   <el-option label="其他服务" value="其他服务"></el-option>
                 </el-select>
               </el-form-item>
@@ -319,6 +325,11 @@
     </div>
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
       <el-table-column
+          label="序号"
+          type="index"
+          width="50">
+        </el-table-column>
+      <el-table-column
         v-for="(item, index) in tableHeader"
         :key="index"
         :prop="item.prop"
@@ -326,7 +337,7 @@
         show-overflow-tooltip
         min-width="100px"
       >
-      <template slot-scope="scope">
+        <template slot-scope="scope">
           <span v-if="item.prop == 'phone'">{{$common.phoneNum(scope.row[item.prop])}}</span>
           <span v-else>{{ scope.row[item.prop] }}</span>
         </template>
@@ -411,7 +422,7 @@ export default {
         name: '', //提交人姓名
         phone: '', //提交人电话
         manager1: '', //客户经理
-        manager2: '', //金融客服
+        manager2: '', //客服经理
         hires: '', //职业类型
         social: '', //社保情况
         provident: '', //公积金情况
@@ -424,9 +435,10 @@ export default {
         tobacco: '', //是否有烟草证
         comtype: '', //企业客户类型 公司注册、代理记账、商标注册、其他服务
         othercomtype: '', //其他服务补充
-        vipstatus: '', //客户状态 新客户、正在跟进、邀约上面、上门签单、放款成功、拒绝客户、放弃客户
+        vipstatus: '', //客户状态 新客户、正在跟进、邀约上门、上门签单、放款成功、拒绝客户、放弃客户
         status: '', //审核状态 草稿、待审核、审核中、驳回、拒绝、通过、放弃、审核结束
         feedback: '', //审批反馈
+        schedate:0,
         remarks: '',
         time: ''
       },
@@ -449,9 +461,9 @@ export default {
         { name: '客户电话', prop: 'phone' },
         { name: '咨询备注', prop: 'remarks' },
         { name: '客户经理', prop: 'manager1' },
-        // { name: '金融客服', prop: 'manager2' },
         { name: '审核状态', prop: 'status' },
-        { name: '咨询时间', prop: 'time' }
+        { name: '更新时间', prop: 'time' },
+        { name: '跟进时间', prop: 'schedate' },
       ],
       find: {
         currentPage: 1, //当前页码
@@ -541,7 +553,7 @@ export default {
       }
       this.$axios.post(this.$api.findIntegrate, data).then(res => {
         this.tableData = res.data[0].data
-        this.find.total = ((res.data[0] || {}).total[0] || {}).total || 0
+        this.find.total = (res.data[0].total[0] || {}).total || 0
       })
     },
     //领取按钮
@@ -612,7 +624,28 @@ export default {
         if (res.code == 200) {
           let tableData = res.data[0].data
           tableData.map(async item => {
-            await this.$axios.post(this.$api.deleteIntegrate, { _id: item._id })
+            if (item.type == row.type && item.type != '意向客户') {
+              await this.$axios.post(this.$api.deleteIntegrate, {
+                _id: item._id
+              })
+            } else if (
+              item.type == row.type &&
+              item.type == '意向客户' &&
+              item.proname == '金融客户'
+            ) {
+              await this.$axios.post(this.$api.deleteIntegrate, {
+                _id: item._id
+              })
+            } else if (
+              item.type == row.type &&
+              item.type == '意向客户' &&
+              item.proname == '企业客户' &&
+              item.comtype == row.comtype
+            ) {
+              await this.$axios.post(this.$api.deleteIntegrate, {
+                _id: item._id
+              })
+            }
           })
         }
         row.manager1 = ''
@@ -628,7 +661,7 @@ export default {
       //提交
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          if (!/^1[3|4|5|7|8]\d{9}$/.test(this.ruleForm.phone)) {
+          if (!/^1[3|4|5|6|7|8|9]\d{9}$/.test(this.ruleForm.phone)) {
             this.$message.error('请输入正确手机号')
             return
           }
