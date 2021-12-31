@@ -79,3 +79,7 @@ src\pages\loan\loan2.vue
 src\views\Customer.vue   // 1353行，time: '2000/01/01 01:01:01'
 src\views\Enterprise.vue  // 575行，time: '2000/01/01 01:01:01'
 src\assets\js\fixedInfo.js  // vipstatusList 添加空号状态
+routes\uploads.js  //27行 新增限制文件大小   
+formidable:{
+   maxFileSize:2000*1024*1024 //设置文件最大限制，默认为2M
+}
