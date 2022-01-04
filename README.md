@@ -76,10 +76,69 @@ src\pages\loan\loan2.vue
 移动前端index.html文件删除客服代码
 
 -----------------------------------------------------------------------------------------------
-src\views\Customer.vue   // 1353行，time: '2000/01/01 01:01:01'
-src\views\Enterprise.vue  // 575行，time: '2000/01/01 01:01:01'
-src\assets\js\fixedInfo.js  // vipstatusList 添加空号状态
-routes\uploads.js  //27行 新增限制文件大小   
-formidable:{
-   maxFileSize:2000*1024*1024 //设置文件最大限制，默认为2M
-}
+src\views\Integrate.vue  //464行 { name: '客户状态', prop: 'vipstatus' }, 462行 { name: '审批反馈', prop: 'feedback' },
+src\views\Customer.vue  //1238行增加 row.schedate = 0
+src\assets\js\fixedInfo.js  
+  //报备客户状态
+  vipstatusList: [
+    {
+      value: '新客户',
+      label: '新客户'
+    },
+    {
+      value: '正在跟进',
+      label: '正在跟进'
+    },
+    {
+      value: '邀约上门',
+      label: '邀约上门'
+    },
+    {
+      value: '上门签单',
+      label: '上门签单'
+    },
+    {
+      value: '上门未签',
+      label: '上门未签'
+    },
+    {
+      value: '办理成功',
+      label: '办理成功'
+    },
+    {
+      value: '拒绝客户',
+      label: '拒绝客户'
+    },
+    {
+      value: '放弃客户',
+      label: '放弃客户'
+    },
+    {
+      value: '暂不需要',
+      label: '暂不需要'
+    },
+    {
+      value: '后期维护',
+      label: '后期维护'
+    },
+    {
+      value: '通话中',
+      label: '通话中'
+    },
+    {
+      value: '未接',
+      label: '未接'
+    },
+    {
+      value: '关机',
+      label: '关机'
+    },
+    {
+      value: '停机',
+      label: '停机'
+    },
+    {
+      value: '空号',
+      label: '空号'
+    }
+  ],
