@@ -76,69 +76,14 @@ src\pages\loan\loan2.vue
 移动前端index.html文件删除客服代码
 
 -----------------------------------------------------------------------------------------------
-src\views\Integrate.vue  //464行 { name: '客户状态', prop: 'vipstatus' }, 462行 { name: '审批反馈', prop: 'feedback' },
-src\views\Customer.vue  //1238行增加 row.schedate = 0
-src\assets\js\fixedInfo.js  
-  //报备客户状态
-  vipstatusList: [
-    {
-      value: '新客户',
-      label: '新客户'
-    },
-    {
-      value: '正在跟进',
-      label: '正在跟进'
-    },
-    {
-      value: '邀约上门',
-      label: '邀约上门'
-    },
-    {
-      value: '上门签单',
-      label: '上门签单'
-    },
-    {
-      value: '上门未签',
-      label: '上门未签'
-    },
-    {
-      value: '办理成功',
-      label: '办理成功'
-    },
-    {
-      value: '拒绝客户',
-      label: '拒绝客户'
-    },
-    {
-      value: '放弃客户',
-      label: '放弃客户'
-    },
-    {
-      value: '暂不需要',
-      label: '暂不需要'
-    },
-    {
-      value: '后期维护',
-      label: '后期维护'
-    },
-    {
-      value: '通话中',
-      label: '通话中'
-    },
-    {
-      value: '未接',
-      label: '未接'
-    },
-    {
-      value: '关机',
-      label: '关机'
-    },
-    {
-      value: '停机',
-      label: '停机'
-    },
-    {
-      value: '空号',
-      label: '空号'
-    }
-  ],
+@@一：vue_cli
+
+npm install js-export-excel -s
+src\views\Statistics.vue
+src\views\Contract.vue  //207行 新增<el-option label="合同生效" value="合同生效"></el-option>
+src\views\Information.vue //27行 { name: "个人信贷" }, { name: "企业信贷" }, { name: "抵押" }
+
+@@二：uniapp_cli
+src\pages\internal\internal.vue //210行 item.status == '合同生效'
+src\pages\sign\sign.vue //151行 item.status == "合同生效"
+src\pages\internalDetail\internalDetail.vue  //71行 、110行{ name: "个人信贷" }, { name: "企业信贷" }, { name: "抵押" }
