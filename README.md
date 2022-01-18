@@ -79,6 +79,7 @@ src\pages\loan\loan2.vue
 @@一：vue_cli
 
 src\views\Works.vue  //153行 164行 v-if="userInfo.uid == '00000' || userInfo.team == '铸力内勤'"
+ // 290行 461行 isrecomed: '否'
 src\views\Contract.vue //748行
 
 
