@@ -79,8 +79,19 @@ src\pages\loan\loan2.vue
 @@一：vue_cli
 
 src\views\Works.vue  //153行 164行 v-if="userInfo.uid == '00000' || userInfo.team == '铸力内勤'"
+src\views\Contract.vue //748行
 
-@@二：uniapp_cli
-src\pages\internal\internal.vue //210行 item.status == '合同生效'
-src\pages\sign\sign.vue //151行 item.status == "合同生效"
-src\pages\internalDetail\internalDetail.vue  //71行 、110行{ name: "个人信贷" }, { name: "企业信贷" }, { name: "抵押" }
+
+
+@@二：koa_cli
+routes\contract.js  // 117行
+
+if (data.uid) {
+        let uidArr = [{ manager1: data.uid }, { manager2: data.uid }, { manager3: data.uid }]
+        let statusArr1 = [{ status: '待签约' }, { status: '审核中' }, { status: '驳回' }, { status: '签约成功' }]
+        let statusArr2 = [{ status: '待签约' }, { status: '审核中' }, { status: '驳回' }, { status: '签约成功' }, { status: '合同生效' }]
+        match['$and'] = [
+            { $or: data.uid ? uidArr : [] },
+            { $or: data.status == 'true' ? statusArr2 : statusArr1 }
+        ]
+    }
