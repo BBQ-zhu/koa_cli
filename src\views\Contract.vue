@@ -2,12 +2,7 @@
   <div class="card">
     <div class="header flex">
       <el-button v-if="meth[0]" type="primary" icon="el-icon-upload" @click="uploadNew">发起签约</el-button>
-      <el-select
-        clearable
-        class="ml20"
-        v-model="selectInput"
-        placeholder="请选择合同类型"
-      >
+      <el-select clearable class="ml20" v-model="selectInput" placeholder="请选择合同类型">
         <el-option
           v-for="item in dynamicTags"
           :key="item._id"
@@ -74,11 +69,12 @@
             </el-form-item>
             <el-form-item label="客户电话:" prop="phone">
               <div style="position: relative">
-              <el-input
-                v-model="ruleForm.phone"
-                placeholder="请输入客户电话"
-              ></el-input>
-              <i @click="findVipUser" style="font-size: 30px;position: absolute; top: 5px; right: 7px" class="el-icon-s-help pointer" ></i>
+                <el-input v-model="ruleForm.phone" placeholder="请输入客户电话"></el-input>
+                <i
+                  @click="findVipUser"
+                  style="font-size: 30px;position: absolute; top: 5px; right: 7px"
+                  class="el-icon-s-help pointer"
+                ></i>
               </div>
             </el-form-item>
             <el-form-item label="客户名称:" prop="name">
@@ -204,6 +200,7 @@
                 <el-option label="审核中" value="审核中"></el-option>
                 <el-option label="驳回" value="驳回"></el-option>
                 <el-option label="签约成功" value="签约成功"></el-option>
+                <el-option label="合同生效" value="合同生效"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item
@@ -252,11 +249,7 @@
     </div>
     <!-- 表格区域 -->
     <el-table v-if="!dialogVisible" :data="tableData" stripe>
-      <el-table-column
-          label="序号"
-          type="index"
-          width="50">
-        </el-table-column>
+      <el-table-column label="序号" type="index" width="50"></el-table-column>
       <el-table-column label="客户签名" min-width="100px">
         <template slot-scope="scope">
           <el-tooltip placement="right">
@@ -387,6 +380,7 @@ export default {
   },
   data() {
     return {
+      userInfo:{},
       loadingShow: false,
       dialogVisible2: false, //合同弹框
       contractDetail: {}, //合同详情
@@ -484,6 +478,7 @@ export default {
   },
   mounted() {
     this.mixinMethod(this.$route.path)
+    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}')
     this.getNewsList()
     this.findTagList()
   },
@@ -510,7 +505,12 @@ export default {
         })
         let contractImg = canvas.toDataURL('image/jpeg', 1) //base64文件 1为质量
         if (type == 'jpg') {
-          await this.downloadFile(contractImg,`铸力电子合同_${this.contractDetail.name}_${this.contractDetail.time.split(' ')[0]}`)
+          await this.downloadFile(
+            contractImg,
+            `铸力电子合同_${this.contractDetail.name}_${
+              this.contractDetail.time.split(' ')[0]
+            }`
+          )
         } else {
           var contentWidth = canvas.width
           var contentHeight = canvas.height
@@ -541,11 +541,21 @@ export default {
               }
             }
           }
-          pdf.save(`电子合同_${this.contractDetail.name}_${this.contractDetail.time.split(' ')[0]}.pdf`)
+          pdf.save(
+            `电子合同_${this.contractDetail.name}_${
+              this.contractDetail.time.split(' ')[0]
+            }.pdf`
+          )
         }
         await this.$logsImg.createlogsImg(
           'api/downLoad',
-          '下载了客户:（'+this.contractDetail.name+'-'+this.contractDetail.phone+'）合同' + type + '版本'
+          '下载了客户:（' +
+            this.contractDetail.name +
+            '-' +
+            this.contractDetail.phone +
+            '）合同' +
+            type +
+            '版本'
         ) //添加操作日志
         this.loadingShow = false
         this.$message.success('下载成功!')
@@ -739,9 +749,11 @@ export default {
       var data = {
         skip: this.find.limit * (this.find.currentPage - 1),
         limit: this.find.limit,
-        type:this.selectInput,
+        type: this.selectInput, //合同类型
         fuzz: this.classType,
-        input: this.input
+        input: this.input,
+        uid: this.userInfo.uid == '00000' || this.userInfo.team == '铸力内勤' ? '' : this.userInfo.uid,
+        status: (this.userInfo.seeall == '是' || (this.classType == 'phone' && this.input.length == 11)) ? 'true' : 'false'
       }
       await this.$axios.post(this.$api.findContract, data).then(res => {
         this.tableData = res.data[0].data
@@ -766,7 +778,7 @@ export default {
     },
     //删除行
     deleteRow(index, row) {
-      this.$confirm('确认删除该产品吗？', '提示', {
+      this.$confirm('确认删除该合同吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
