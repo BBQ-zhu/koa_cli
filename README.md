@@ -78,10 +78,7 @@ src\pages\loan\loan2.vue
 -----------------------------------------------------------------------------------------------
 @@一：vue_cli
 
-npm install js-export-excel -s
-src\views\Statistics.vue
-src\views\Contract.vue  //207行 新增<el-option label="合同生效" value="合同生效"></el-option>
-src\views\Information.vue //27行 { name: "个人信贷" }, { name: "企业信贷" }, { name: "抵押" }
+src\views\Works.vue  //153行 164行 v-if="userInfo.uid == '00000' || userInfo.team == '铸力内勤'"
 
 @@二：uniapp_cli
 src\pages\internal\internal.vue //210行 item.status == '合同生效'
