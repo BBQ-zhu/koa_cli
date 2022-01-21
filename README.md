@@ -77,22 +77,27 @@ src\pages\loan\loan2.vue
 
 -----------------------------------------------------------------------------------------------
 @@一：vue_cli
+src\views\Customer.vue //1349行 vipstatus: '老客户'
+src\views\Enterprise.vue //571行  vipstatus: '老客户'
+src\views\Integrate.vue  //353行  <span :style="{color:scope.row.time=='2000/01/01 01:01:01'?'red':''}">领取</span>
+ //570行 检查 row.manager1 =
 
-src\views\Works.vue  //153行 164行 v-if="userInfo.uid == '00000' || userInfo.team == '铸力内勤'"
- // 290行 461行 isrecomed: '否'
-src\views\Contract.vue //748行
+
+@@二：uniapp_cli
 
 
 
-@@二：koa_cli
-routes\contract.js  // 117行
-
-if (data.uid) {
-        let uidArr = [{ manager1: data.uid }, { manager2: data.uid }, { manager3: data.uid }]
-        let statusArr1 = [{ status: '待签约' }, { status: '审核中' }, { status: '驳回' }, { status: '签约成功' }]
-        let statusArr2 = [{ status: '待签约' }, { status: '审核中' }, { status: '驳回' }, { status: '签约成功' }, { status: '合同生效' }]
-        match['$and'] = [
-            { $or: data.uid ? uidArr : [] },
-            { $or: data.status == 'true' ? statusArr2 : statusArr1 }
-        ]
+@@三：koa_cli
+routes\integrate.js  //16行 
+if(data.vipstatus != '老客户'){
+        data.time = dateTime()
     }
+
+
+@@四：vue_pc
+
+
+
+开发情况：
+前后端
+全局搜索： schedate 将时间替换为15天
