@@ -81,7 +81,10 @@ src\views\Customer.vue //1349行 vipstatus: '老客户'
 src\views\Enterprise.vue //571行  vipstatus: '老客户'
 src\views\Integrate.vue  //353行  <span :style="{color:scope.row.time=='2000/01/01 01:01:01'?'red':''}">领取</span>
  //570行 检查 row.manager1 =
-
+ src\assets\css\release.css 
+body{
+	user-select: none;
+}
 
 @@二：uniapp_cli
 
